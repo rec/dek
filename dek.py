@@ -2,64 +2,115 @@
 🗃 dek - the decorator-decorator 🗃
 ======================================================
 
-* ``dek``
+``dek`` simplifies writing decorators that take optional parameters.
+
+Writing a decorator that take parameters requires three levels of function and
 
 
-EXAMPLE: as a decorator for tests
+
+(See
+`this article <https://medium.com/better-programming/how-to-write-python\
+-decorators-that-take-parameters-b5a07d7fe393>`_ for more details.)
+
+``dek`` is a tiny library that decorates your decorators to fix these issues.
+
+EXAMPLE:
+
+Write a decorator ``print_before`` that prints a function's arguments with a
+label when it executes.
+
+Make sure it works as ``@print_before`` or ``@print_before()`` or
+``@print_before(label='debug')``.
 
 .. code-block:: python
 
-    from pathlib import Path
-    import dek
-    import unittest
+    # Without dek all is sadness
 
-    CWD = Path().absolute()
+    import functools
+
+    def print_before(label='debug'):
+        def deferred(func):
+            @functools.wraps(func)
+            def wrapped(*args, **kwargs):
+                print(label, args, kwargs)
+                return func(*args, **kwargs)
+
+            return wrapped
+
+        if callable(label):
+            return deferred(label)
+        return deferred
 
 
-    # Decorate a whole class so each test runs in a new temporary directory
-    @dek('a', foo='bar')
-    class MyTest(unittest.TestCast):
-        def test_something(self):
-            assert Path('a').read_text() = 'a\n'
-            assert Path('foo').read_text() = 'bar\n'
+    # Things go better with dek
+
+    from dek import dek
+
+    @dek
+    def print_before(func, args, kwargs, label='debug'):
+        print(label, args, kwargs)
+        return func(*args, **kargs)
 
 
-    # Decorate single tests
-    class MyTest(unittest.TestCast):
-        @dek(foo='bar', baz=bytes(range(4)))
-        def test_something(self):
-            assert Path('foo').read_text() = 'bar\n'
-            assert Path('baz').read_bytes() = bytes(range(4)))
+    # For finer control over parameters, enjoy ``dek.dex``
 
-        # Run in an empty temporary directory
-        @dek
-        def test_something_else(self):
-            assert not Path('a').exists()
-            assert Path().absolute() != CWD
+    from dek import dex
+
+    @dex
+    def print_before(func, label='debug'):
+        def wrapped(foo, bar):
+            print(label, foo, bar)
+            return func(foo, bar)
+
+         return wrapped
 """
+import functools
 
-__all__ = ('dek',)
+__all__ = 'dek', 'dex'
 __version__ = '0.8.0'
 
 
-def dek(*args, cwd=True, **kwargs):
+def _dek(split, decorator):
     """
-    A context manager to create and fill a temporary directory.
+    Wrap a decorator so that it can be called with parameters or without,
+    and call ``functools.update_wrapper()`` if needed.
 
-    ARGUMENTS
-      args:
-        A list of strings or dictionaries.  For strings, a file is created
-        with that string as name and contents.  For dictionaries, the contents
-        are used to recursively create and fill the directory.
+    If split is false:
 
-      cwd:
-        If true, change the working directory to the temp dir at the start
-        of the context and restore the original working directory at the end.
+    Decorators must have a signature whose first three parameters are:
 
-      kwargs:
-        A dictionary mapping file or directory names to values.
-        If the key's value is a string it is used to file a file of that name.
-        If it's a dictionary, its contents are used to recursively create and
-        fill a subdirectory.
+       def _decorator(func, args, kwargs, ...):
+
+    where ``func`` is the function being wrapped, ``args`` are the positional
+    arguments to ``func``, and kwargs are the keyword arguments to ``func``.
+
+    After that the decorator is free to use any parameters or arguments it
+    cares to.
     """
-    pass
+
+    def decorate(func, *args_d, **kwargs_d):
+        if split:
+            wrapped = decorator(func, *args_d, **kwargs_d)
+        else:
+
+            def wrapped(*args_f, **kwargs_f):
+                return decorator(func, args_f, kwargs_f, *args_d, **kwargs_d)
+
+        return functools.update_wrapper(wrapped, func)
+
+    @functools.wraps(decorator)
+    def wrapped(*args, **kwargs):
+        if len(args) == 1 and callable(args[0]) and not kwargs:
+            return decorate(args[0])
+
+        @functools.wraps(decorator)
+        def deferred(func):
+            return decorate(func, *args, **kwargs)
+
+        return deferred
+
+    return wrapped
+
+
+dek = functools.partial(_dek, False)
+dex = functools.partial(_dek, True)
