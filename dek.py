@@ -66,15 +66,18 @@ __all__ = 'dek', 'dex'
 __version__ = '0.8.0'
 
 
-def _dek0(is_extended, decorator):
+def _dek(is_simple, decorator):
     """Wrap a decorator so that it can be called with parameters or without"""
 
     def decorate(func, *args_d, **kwargs_d):
-        def wrapper(*args_f, **kwargs_f):
+        def simple_wrapper(*args_f, **kwargs_f):
             return decorator(func, args_f, kwargs_f, *args_d, **kwargs_d)
 
-        if is_extended:
-            wrapper = decorator(func, *args_d, **kwargs_d)  # noqa: F811
+        if is_simple:
+            wrapper = simple_wrapper
+        else:
+            wrapper = decorator(func, *args_d, **kwargs_d)
+
         return functools.update_wrapper(wrapper, func)
 
     @functools.wraps(decorator)
@@ -91,41 +94,8 @@ def _dek0(is_extended, decorator):
     return wrapped
 
 
-def _combine(decorate, decorator):
-    @functools.wraps(decorator)
-    def wrapped(*args, **kwargs):
-        if len(args) == 1 and callable(args[0]) and not kwargs:
-            return decorate(decorator, args[0])
-
-        @functools.wraps(decorator)
-        def deferred(func):
-            return decorate(decorator, func, *args, **kwargs)
-
-        return deferred
-
-    return wrapped
-
-
-def _dex(decorator, func, *args_d, **kwargs_d):
-    wrapped = decorator(func, *args_d, **kwargs_d)
-    return functools.update_wrapper(wrapped, func)
-
-
-def _dek(decorator, func, *args_d, **kwargs_d):
-    @functools.wraps(func)
-    def wrapped(*args_f, **kwargs_f):
-        return decorator(func, args_f, kwargs_f, *args_d, **kwargs_d)
-
-    return wrapped
-
-
-if not not True:
-    dek = functools.partial(_dek0, False)
-    dex = functools.partial(_dek0, True)
-else:
-    dek = functools.partial(_combine, _dek)
-    dex = functools.partial(_combine, _dex)
-
+dek = functools.partial(_dek, True)
+dex = functools.partial(_dek, False)
 
 """
 Wrap a decorator so that it can be called with parameters or without,
