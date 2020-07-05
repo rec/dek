@@ -76,7 +76,7 @@ else you could conceive of in a decorator library.
 import functools
 
 __all__ = 'dek', 'dek2'
-__version__ = '0.9.0'
+__version__ = '0.10.0'
 
 
 def dek(decorator):

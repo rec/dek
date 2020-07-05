@@ -1,3 +1,7 @@
+## v0.10.0 - 20/07/05
+
+* Use functools.partial to pass calls
+
 ## v0.9.0 - 20/07/05
 
 * First release
