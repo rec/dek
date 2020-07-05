@@ -37,9 +37,9 @@ label when it executes
     from dek import dek
 
     @dek
-    def print_before(func, args, kwargs, label='debug'):
-        print(label, args, kwargs)
-        return func(*args, **kargs)
+    def print_before(func, label='debug'):
+        print(label, func.args, func.keywords)
+        return func()
 
 
     # For finer control, enjoy ``dek.dek2``
@@ -83,23 +83,18 @@ def dek(decorator):
     """
     Implement a decorator with parameters, from a simple function
 
-    The function ``decorator`` has signature
-    ``decorator(func, args, kwargs, ...)`` where:
-
-    * ``func`` is the function being wrapped
-    * ``args`` are the positional arguments to ``func``
-    * ``kwargs`` are the  keyword arguments to ``func``
-    * and the remaining arguments (`...`), positional or keyword, can be
-      anything you need to implement the decorator.
+    The function ``decorator`` has signature ``decorator(func, ...)``
+    where ``func`` is a ``functools.partial`` of the call that is
+    being handled, and the remaining
 
     EXAMPLE:
 
     .. code-block:: python
 
         @dek
-        def print_before(func, args, kwargs, my_label='debug'):
-            print(my_label, args, kwargs)
-            return func(*args, **kargs)
+        def print_before(func, label='debug'):
+            print(label, func.args, func.keywords)
+            return func()
     """
     return _dek(True, decorator)
 
@@ -110,8 +105,8 @@ def dek2(decorator):
     a function.
 
     The top-level function ``decorator`` has signature ``decorator(func, ...)``
-    where ``func`` is the function being wrapped, and it returns the
-    wrapper function, that has any signature needed.
+    where ``func`` is the function being wrapped. The wrapper function
+    that's returned can have any signature needed.
 
     EXAMPLE:
 
@@ -132,7 +127,8 @@ def dek2(decorator):
 def _dek(is_simple, decorator):
     def decorate(func, *args_d, **kwargs_d):
         def simple_wrapper(*args_f, **kwargs_f):
-            return decorator(func, args_f, kwargs_f, *args_d, **kwargs_d)
+            f = functools.partial(func, *args_f, **kwargs_f)
+            return decorator(f, *args_d, **kwargs_d)
 
         if is_simple:
             wrapper = simple_wrapper

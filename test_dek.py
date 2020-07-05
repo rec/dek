@@ -7,9 +7,9 @@ class TestDek(unittest.TestCase):
         self.results = []
 
         @dek
-        def dek_decorator(func, args, kwargs, label='debug'):
-            result = func(*args, **kwargs)
-            self.results.append((result, args, kwargs, label))
+        def dek_decorator(func, label='debug'):
+            result = func()
+            self.results.append((result, func.args, func.keywords, label))
             return result
 
         @dek2
@@ -24,7 +24,7 @@ class TestDek(unittest.TestCase):
         self.dek_decorator = dek_decorator
         self.dek2_decorator = dek2_decorator
 
-    def test_dek21(self):
+    def test_dek2_1(self):
         @self.dek2_decorator
         def func(a, b):
             return a + b
@@ -32,7 +32,7 @@ class TestDek(unittest.TestCase):
         assert func(1, 2) == 3
         assert self.results == [(3, (1, 2), {}, 'debug')]
 
-    def test_dek22(self):
+    def test_dek2_2(self):
         @self.dek2_decorator()
         def func(a, b):
             return a + b
@@ -40,7 +40,7 @@ class TestDek(unittest.TestCase):
         assert func(1, 2) == 3
         assert self.results == [(3, (1, 2), {}, 'debug')]
 
-    def test_dek23(self):
+    def test_dek2_3(self):
         @self.dek2_decorator(label='TEST')
         def func(a, b):
             return a + b
@@ -48,7 +48,7 @@ class TestDek(unittest.TestCase):
         assert func(1, 2) == 3
         assert self.results == [(3, (1, 2), {}, 'TEST')]
 
-    def test_dek24(self):
+    def test_dek2_4(self):
         @self.dek2_decorator('TEST')
         def func(a, b):
             return a + b
