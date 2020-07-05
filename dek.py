@@ -2,22 +2,15 @@
 🗃 dek - the decorator-decorator 🗃
 ======================================================
 
-``dek`` makes writing decorators a dream.
+``dek`` decorates your decorators to diminish defects and drudgery.
 
 Writing a decorator with parameters needs three levels of function and
-several opportunities for error. (See
-`this article <https://medium.com/better-programming/how-to-write-python\
--decorators-that-take-parameters-b5a07d7fe393>`_ for more details.)
-
-``dek`` decorates your decorators to diminish defects and drudgery.
+several opportunities for error, which ``dek`` deletes.
 
 EXAMPLE:
 
 Write a decorator ``print_before`` that prints a function's arguments with a
-label when it executes.
-
-And make sure this works: ``@print_before`` and this: ``@print_before()`` and
-this: ``@print_before('debug')`` and this: ``@print_before(label='debug')``.
+label when it executes
 
 .. code-block:: python
 
@@ -49,26 +42,94 @@ this: ``@print_before('debug')`` and this: ``@print_before(label='debug')``.
         return func(*args, **kargs)
 
 
-    # For finer control, enjoy ``dek.dex``
-    from dek import dex
+    # For finer control, enjoy ``dek.dek2``
+    from dek import dek2
 
-    @dex
+    @dek2
     def print_before(func, label='debug'):
         def wrapped(foo, bar):
             print(label, foo, bar)
             return func(foo, bar)
 
         return wrapped
+
+NOTES:
+
+All these forms are supported:
+
+1. ``@print_before``
+2. ``@print_before()``
+3. ``@print_before('debug')``
+4. ``@print_before(label='debug')``
+5. ``@print_before('debug', verbose=True)``
+
+`This article <https://medium.com/better-programming/how-to-write-python\
+-decorators-that-take-parameters-b5a07d7fe393>`_ talks more about
+decorators that take parameters.
+
+For advanced problems, the PyPi library
+`decorator <https://github.com/micheles/decorator/blob/master/docs/\
+documentation.md>`_ does not do what ``dek`` does, but does pretty anything
+else you could conceive of in a decorator library.
+
 """
 import functools
 
-__all__ = 'dek', 'dex'
-__version__ = '0.8.0'
+__all__ = 'dek', 'dek2'
+__version__ = '0.9.0'
+
+
+def dek(decorator):
+    """
+    Implement a decorator with parameters, from a simple function
+
+    The function ``decorator`` has signature
+    ``decorator(func, args, kwargs, ...)`` where:
+
+    * ``func`` is the function being wrapped
+    * ``args`` are the positional arguments to ``func``
+    * ``kwargs`` are the  keyword arguments to ``func``
+    * and the remaining arguments (`...`), positional or keyword, can be
+      anything you need to implement the decorator.
+
+    EXAMPLE:
+
+    .. code-block:: python
+
+        @dek
+        def print_before(func, args, kwargs, my_label='debug'):
+            print(my_label, args, kwargs)
+            return func(*args, **kargs)
+    """
+    return _dek(True, decorator)
+
+
+def dek2(decorator):
+    """
+    Implement a decorator with parameters, from a function that returns
+    a function.
+
+    The top-level function ``decorator`` has signature ``decorator(func, ...)``
+    where ``func`` is the function being wrapped, and it returns the
+    wrapper function, that has any signature needed.
+
+    EXAMPLE:
+
+    .. code-block:: python
+
+        @dek2
+        def print_before(func, label='label'):
+            def wrapper(foo, bar):
+                if verbose:
+                    print(label, foo, bar)
+                return func(foo, bar)
+
+            return wrapper
+    """
+    return _dek(False, decorator)
 
 
 def _dek(is_simple, decorator):
-    """Wrap a decorator so that it can be called with parameters or without"""
-
     def decorate(func, *args_d, **kwargs_d):
         def simple_wrapper(*args_f, **kwargs_f):
             return decorator(func, args_f, kwargs_f, *args_d, **kwargs_d)
@@ -92,24 +153,3 @@ def _dek(is_simple, decorator):
         return deferred
 
     return wrapped
-
-
-dek = functools.partial(_dek, True)
-dex = functools.partial(_dek, False)
-
-"""
-Wrap a decorator so that it can be called with parameters or without,
-and call ``functools.update_wrapper()`` if needed.
-
-If split is false:
-
-Decorators must have a signature whose first three parameters are:
-
-   def _decorator(func, args, kwargs, ...):
-
-where ``func`` is the function being wrapped, ``args`` are the positional
-arguments to ``func``, and kwargs are the keyword arguments to ``func``.
-
-After that the decorator is free to use any parameters or arguments it
-cares to.
-"""
