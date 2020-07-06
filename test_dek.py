@@ -91,6 +91,73 @@ class TestDek(unittest.TestCase):
     def test_classes(self):
         results = []
 
+        @dek(methods=True)
+        def decorator(func):
+            results.append(func)
+            return func()
+
+        @decorator
+        class Foo:
+            def one(self):
+                pass
+
+            def two(self, a, b=False):
+                pass
+
+            def _ignored(self):
+                pass
+
+        foo = Foo()
+        foo.one()
+        foo._ignored()
+        foo.two('hello', b=True)
+
+        one, two = results
+
+        assert one.func.__name__ == 'one'
+        assert one.args == (foo,)
+        assert not one.keywords
+
+        assert two.func.__name__ == 'two'
+        assert two.args == (foo, 'hello')
+        assert two.keywords == {'b': True}
+
+    def test_classes2(self):
+        results = []
+
+        @dek(is_simple=False, methods='test')
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                results.append((func.__name__, args, kwargs))
+                return func(*args, **kwargs)
+
+            return wrapper
+
+        @decorator
+        class Foo:
+            def test_one(self):
+                pass
+
+            def ignored_test(self):
+                pass
+
+            def test_two(self, a, b=False):
+                pass
+
+        foo = Foo()
+        foo.test_one()
+        foo.ignored_test()
+        foo.test_two('hello', b=True)
+        expected = [
+            ('test_one', (foo,), {}),
+            ('test_two', (foo, 'hello'), {'b': True}),
+        ]
+
+        assert results == expected
+
+    def test_classes_old(self):
+        results = []
+
         @dek2
         def decorator(func):
             # Copied from https://github.com/rec/tdir

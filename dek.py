@@ -79,7 +79,7 @@ __all__ = 'dek', 'dek2'
 __version__ = '0.10.1'
 
 
-def dek(decorator):
+def _dek1(decorator):
     """
     Implement a decorator with parameters, from a simple function
 
@@ -96,10 +96,10 @@ def dek(decorator):
             print(label, func.args, func.keywords)
             return func()
     """
-    return _dek(True, decorator)
+    return _dek(decorator, True)
 
 
-def dek2(decorator):
+def _dek2(decorator):
     """
     Implement a decorator with parameters, from a function that returns
     a function.
@@ -121,11 +121,32 @@ def dek2(decorator):
 
             return wrapper
     """
-    return _dek(False, decorator)
+    return _dek(decorator, False)
 
 
-def _dek(is_simple, decorator):
+def _dek(decorator, is_simple=True, methods=False):
+    def is_public_method(m):
+        return not m.startswith('_')
+
+    def is_named_method(m):
+        return m.startswith(methods)
+
+    if methods:
+        if callable(methods):
+            is_method = methods
+        elif methods is True:
+            is_method = is_public_method
+        else:
+            assert isinstance(methods, str)
+            is_method = is_named_method
+
     def decorate(func, *args_d, **kwargs_d):
+        if methods and isinstance(func, type):
+            for k, v in vars(func).items():
+                if callable(v) and not isinstance(v, type) and is_method(k):
+                    setattr(func, k, decorate(v, *args_d, **kwargs_d))
+            return func
+
         def simple_wrapper(*args_f, **kwargs_f):
             f = functools.partial(func, *args_f, **kwargs_f)
             return decorator(f, *args_d, **kwargs_d)
@@ -151,3 +172,10 @@ def _dek(is_simple, decorator):
         return deferred
 
     return wrapped
+
+
+dek = _dek(_dek, False)
+dek2 = dek(False)
+
+dek.__doc__ = _dek1.__doc__
+dek2.__doc__ = _dek2.__doc__
