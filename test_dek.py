@@ -87,3 +87,44 @@ class TestDek(unittest.TestCase):
 
         assert func(1, 2) == 3
         assert self.results == [(3, (1, 2), {}, 'TEST')]
+
+    def test_classes(self):
+        results = []
+
+        @dek2
+        def decorator(func):
+            # Copied from https://github.com/rec/tdir
+            if isinstance(func, type):
+                for attr, value in vars(func).items():
+                    if attr.startswith('test') and callable(value):
+                        setattr(func, attr, decorator(value))
+
+                return func
+
+            def wrapper(*args, **kwargs):
+                results.append((func.__name__, args, kwargs))
+                return func(*args, **kwargs)
+
+            return wrapper
+
+        @decorator
+        class Foo:
+            def test_one(self):
+                pass
+
+            def not_a_test(self):
+                pass
+
+            def test_two(self, a, b=False):
+                pass
+
+        foo = Foo()
+        foo.test_one()
+        foo.not_a_test()
+        foo.test_two('hello', b=True)
+        expected = [
+            ('test_one', (foo,), {}),
+            ('test_two', (foo, 'hello'), {'b': True}),
+        ]
+
+        assert results == expected

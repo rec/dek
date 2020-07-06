@@ -135,7 +135,9 @@ def _dek(is_simple, decorator):
         else:
             wrapper = decorator(func, *args_d, **kwargs_d)
 
-        return functools.update_wrapper(wrapper, func)
+        if not isinstance(func, type):
+            functools.update_wrapper(wrapper, func)
+        return wrapper
 
     @functools.wraps(decorator)
     def wrapped(*args, **kwargs):
