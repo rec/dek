@@ -79,51 +79,6 @@ __all__ = 'dek', 'dek2'
 __version__ = '0.10.1'
 
 
-def _dek1(decorator):
-    """
-    Implement a decorator with parameters, from a simple function
-
-    The function ``decorator`` has signature ``decorator(func, ...)``
-    where ``func`` is a ``functools.partial`` of the call that is
-    being handled, and the remaining
-
-    EXAMPLE:
-
-    .. code-block:: python
-
-        @dek
-        def print_before(func, label='debug'):
-            print(label, func.args, func.keywords)
-            return func()
-    """
-    return _dek(decorator, True)
-
-
-def _dek2(decorator):
-    """
-    Implement a decorator with parameters, from a function that returns
-    a function.
-
-    The top-level function ``decorator`` has signature ``decorator(func, ...)``
-    where ``func`` is the function being wrapped. The wrapper function
-    that's returned can have any signature needed.
-
-    EXAMPLE:
-
-    .. code-block:: python
-
-        @dek2
-        def print_before(func, label='label'):
-            def wrapper(foo, bar):
-                if verbose:
-                    print(label, foo, bar)
-                return func(foo, bar)
-
-            return wrapper
-    """
-    return _dek(decorator, False)
-
-
 def _dek(decorator, is_simple=True, methods=False):
     def is_public_method(m):
         return not m.startswith('_')
@@ -177,5 +132,41 @@ def _dek(decorator, is_simple=True, methods=False):
 dek = _dek(_dek, False)
 dek2 = dek(False)
 
-dek.__doc__ = _dek1.__doc__
-dek2.__doc__ = _dek2.__doc__
+dek.__doc__ = """
+Implement a decorator with parameters, from a simple function
+
+The function ``decorator`` has signature ``decorator(func, ...)``
+where ``func`` is a ``functools.partial`` of the call that is
+being handled, and the remaining
+
+EXAMPLE:
+
+.. code-block:: python
+
+    @dek
+    def print_before(func, label='debug'):
+        print(label, func.args, func.keywords)
+        return func()
+"""
+
+dek2.__doc__ = """
+Implement a decorator with parameters, from a function that returns
+a function.
+
+The top-level function ``decorator`` has signature ``decorator(func, ...)``
+where ``func`` is the function being wrapped. The wrapper function
+that's returned can have any signature needed.
+
+EXAMPLE:
+
+.. code-block:: python
+
+    @dek2
+    def print_before(func, label='label'):
+        def wrapper(foo, bar):
+            if verbose:
+                print(label, foo, bar)
+            return func(foo, bar)
+
+        return wrapper
+"""
