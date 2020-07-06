@@ -79,7 +79,7 @@ __all__ = 'dek', 'dek2'
 __version__ = '0.10.1'
 
 
-def _dek(decorator, is_simple=True, methods=False):
+def _dek(decorator, defer=False, methods=False):
     def is_public_method(m):
         return not m.startswith('_')
 
@@ -106,10 +106,10 @@ def _dek(decorator, is_simple=True, methods=False):
             f = functools.partial(func, *args_f, **kwargs_f)
             return decorator(f, *args_d, **kwargs_d)
 
-        if is_simple:
-            wrapper = simple_wrapper
-        else:
+        if defer:
             wrapper = decorator(func, *args_d, **kwargs_d)
+        else:
+            wrapper = simple_wrapper
 
         if not isinstance(func, type):
             functools.update_wrapper(wrapper, func)
@@ -129,8 +129,8 @@ def _dek(decorator, is_simple=True, methods=False):
     return wrapped
 
 
-dek = _dek(_dek, False)
-dek2 = dek(False)
+dek = _dek(_dek, defer=True)
+dek2 = dek(defer=True)
 
 dek.__doc__ = """
 Implement a decorator with parameters, from a simple function

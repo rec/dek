@@ -125,7 +125,7 @@ class TestDek(unittest.TestCase):
     def test_classes2(self):
         results = []
 
-        @dek(is_simple=False, methods='test')
+        @dek(defer=True, methods='test')
         def decorator(func):
             def wrapper(*args, **kwargs):
                 results.append((func.__name__, args, kwargs))
