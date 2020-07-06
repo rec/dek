@@ -1,3 +1,8 @@
+## v0.10.2 - 20/07/06
+
+* Rename and negate `is_simple` to `defer`
+* New methods parameter
+
 ## v0.10.1 - 20/07/06
 
 * Do not use functools.update_wrapper() on types
