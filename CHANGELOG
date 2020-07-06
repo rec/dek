@@ -1,3 +1,8 @@
+## v0.10.1 - 20/07/06
+
+* Do not use functools.update_wrapper() on types
+* Update documentation
+
 ## v0.10.0 - 20/07/05
 
 * Use functools.partial to pass calls
