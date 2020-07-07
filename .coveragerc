@@ -7,7 +7,7 @@ source = dek
 
 [report]
 
-fail_under = 70
+fail_under = 100
 skip_covered = True
 
 exclude_lines =

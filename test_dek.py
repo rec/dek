@@ -107,12 +107,17 @@ class TestDek(unittest.TestCase):
             def _ignored(self):
                 pass
 
+        @decorator
+        def fn_three(c):
+            pass
+
         foo = Foo()
         foo.one()
         foo._ignored()
         foo.two('hello', b=True)
+        fn_three(23)
 
-        one, two = results
+        one, two, three = results
 
         assert one.func.__name__ == 'one'
         assert one.args == (foo,)
@@ -121,6 +126,10 @@ class TestDek(unittest.TestCase):
         assert two.func.__name__ == 'two'
         assert two.args == (foo, 'hello')
         assert two.keywords == {'b': True}
+
+        assert three.func.__name__ == 'fn_three'
+        assert three.args == (23,)
+        assert three.keywords == {}
 
     def test_classes2(self):
         results = []
@@ -154,6 +163,82 @@ class TestDek(unittest.TestCase):
         ]
 
         assert results == expected
+
+    def test_classes_callable(self):
+        results = []
+
+        def is_method(m):
+            from inspect import signature
+
+            return len(signature(m).parameters) > 1
+
+        @dek(methods=is_method)
+        def decorator(func):
+            results.append(func)
+            return func()
+
+        @decorator
+        class Foo:
+            def one(self, a, b=False):
+                pass
+
+            def ignored(self):
+                pass
+
+        @decorator
+        def fn_two(c):
+            pass
+
+        foo = Foo()
+        foo.one('hello', b=True)
+        foo.ignored()
+        fn_two(23)
+
+        one, two = results
+
+        assert one.func.__name__ == 'one'
+        assert one.args == (foo, 'hello')
+        assert one.keywords == {'b': True}
+
+        assert two.func.__name__ == 'fn_two'
+        assert two.args == (23,)
+        assert two.keywords == {}
+
+    def test_classes_methods_false(self):
+        results = []
+
+        @dek(methods=False)
+        def decorator(func):
+            results.append(func)
+            return func()
+
+        @decorator
+        class Foo:
+            def one(self):
+                pass
+
+            def two(self, a, b=False):
+                pass
+
+            def _ignored(self):
+                pass
+
+        @decorator
+        def fn_three(c):
+            pass
+
+        foo = Foo()
+        foo.one()
+        foo._ignored()
+        foo.two('hello', b=True)
+        fn_three(23)
+
+        print(results)
+        (three,) = results
+
+        assert three.func.__name__ == 'fn_three'
+        assert three.args == (23,)
+        assert three.keywords == {}
 
     def test_classes_old(self):
         results = []
