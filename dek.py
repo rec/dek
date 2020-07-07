@@ -4,8 +4,8 @@
 
 ``dek`` decorates your decorators to diminish defects and drudgery.
 
-Writing a decorator with parameters needs three levels of function and
-several opportunities for error, which ``dek`` deletes.
+Writing a decorator with parameters needs three levels of function and offers
+several opportunities for error, dull drudgery ``dek`` deletes.
 
 EXAMPLE:
 
@@ -14,7 +14,7 @@ label when it executes
 
 .. code-block:: python
 
-    # Without dek all is sadness
+    # Without dek all is confusion
 
     import functools
 
@@ -33,7 +33,7 @@ label when it executes
         return deferred
 
 
-    # Things go better with dek
+    # Things go clearer with dek
     from dek import dek
 
     @dek
@@ -42,10 +42,8 @@ label when it executes
         return func()
 
 
-    # For finer control, enjoy ``dek.dek2``
-    from dek import dek2
-
-    @dek2
+    # Or use defer mode for more control
+    @dek(defer=True)
     def print_before(func, label='debug'):
         def wrapped(foo, bar):
             print(label, foo, bar)
@@ -55,13 +53,13 @@ label when it executes
 
 NOTES:
 
-All these forms are supported:
+Decorators can be called in many ways:
 
-1. ``@print_before``
-2. ``@print_before()``
-3. ``@print_before('debug')``
-4. ``@print_before(label='debug')``
-5. ``@print_before('debug', verbose=True)``
+* ``@print_before``
+* ``@print_before()``
+* ``@print_before('debug')``
+* ``@print_before(label='debug')``
+* ``@print_before('debug', verbose=True)``
 
 `This article <https://medium.com/better-programming/how-to-write-python\
 -decorators-that-take-parameters-b5a07d7fe393>`_ talks more about
@@ -75,16 +73,60 @@ else you could conceive of in a decorator library.
 """
 import functools
 
-__all__ = 'dek', 'dek2'
+__all__ = 'dek'
 __version__ = '0.10.2'
 
 
 def _dek(decorator, defer=False, methods=False):
+    """
+    Implement a decorator that works with or without parameters and
+    understands classes.
+
+    dek has two modes, simple and defer.  Simple mode, the default,
+    is less work but offers less control.
+
+    * In simple mode, ``decorator`` is a single function that does all the work
+
+    * In defer mode, ``decorator`` is a function that returns a function that
+      that does the work.
+
+    .. code-block:: python
+
+       @dek
+       def print_before(func, label='debug'):  # simple mode
+           print(label, func.args, func.keywords)
+           return func()
+
+       @dek(defer=True)
+       def print_before(func, label='label'):  # defer mode
+           def wrapper(foo, bar):
+               if verbose:
+                   print(label, foo, bar)
+               return func(foo, bar)
+
+           return wrapper
+
+    The ``methods`` parameter says how classes are treated:
+
+    * If ``methods`` is ``False`` then classes are decorated like any callable;
+      otherwise, classes are not decorated, but their methods might be.
+
+    * If ``methods`` is ``True`` then only methods whose names start with ``_``
+    are decorated
+
+    * If ``methods`` is a string then only methods whose names start
+    with that string are decorated (which means that if ``methods`` is
+    the empty string, that all methods are decorated)
+
+    * If ``methods`` is a callable then only methods that return true when
+    passed to this callable are decorated
+    """
+
     def is_public_method(m):
-        return not m.startswith('_')
+        return not m.__name__.startswith('_')
 
     def is_named_method(m):
-        return m.startswith(methods)
+        return m.__name__.startswith(methods)
 
     if methods:
         if callable(methods):
@@ -98,7 +140,7 @@ def _dek(decorator, defer=False, methods=False):
     def decorate(func, *args_d, **kwargs_d):
         if methods and isinstance(func, type):
             for k, v in vars(func).items():
-                if callable(v) and not isinstance(v, type) and is_method(k):
+                if callable(v) and not isinstance(v, type) and is_method(v):
                     setattr(func, k, decorate(v, *args_d, **kwargs_d))
             return func
 
@@ -130,43 +172,3 @@ def _dek(decorator, defer=False, methods=False):
 
 
 dek = _dek(_dek, defer=True)
-dek2 = dek(defer=True)
-
-dek.__doc__ = """
-Implement a decorator with parameters, from a simple function
-
-The function ``decorator`` has signature ``decorator(func, ...)``
-where ``func`` is a ``functools.partial`` of the call that is
-being handled, and the remaining
-
-EXAMPLE:
-
-.. code-block:: python
-
-    @dek
-    def print_before(func, label='debug'):
-        print(label, func.args, func.keywords)
-        return func()
-"""
-
-dek2.__doc__ = """
-Implement a decorator with parameters, from a function that returns
-a function.
-
-The top-level function ``decorator`` has signature ``decorator(func, ...)``
-where ``func`` is the function being wrapped. The wrapper function
-that's returned can have any signature needed.
-
-EXAMPLE:
-
-.. code-block:: python
-
-    @dek2
-    def print_before(func, label='label'):
-        def wrapper(foo, bar):
-            if verbose:
-                print(label, foo, bar)
-            return func(foo, bar)
-
-        return wrapper
-"""
