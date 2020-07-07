@@ -79,7 +79,7 @@ else you could conceive of in a decorator library.
 import functools
 
 __all__ = ('dek',)
-__version__ = '0.10.2'
+__version__ = '0.10.3'
 
 
 def _dek(decorator, defer=False, methods=None):
