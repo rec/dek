@@ -112,14 +112,14 @@ def _dek(decorator, defer=False, methods=False):
       otherwise, classes are not decorated, but their methods might be.
 
     * If ``methods`` is ``True`` then only methods whose names start with ``_``
-    are decorated
+      are decorated
 
     * If ``methods`` is a string then only methods whose names start
-    with that string are decorated (which means that if ``methods`` is
-    the empty string, that all methods are decorated)
+      with that string are decorated (which means that if ``methods`` is
+      the empty string, that all methods are decorated)
 
     * If ``methods`` is a callable then only methods that return true when
-    passed to this callable are decorated
+      passed to this callable are decorated
     """
 
     def is_public_method(m):
