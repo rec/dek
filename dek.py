@@ -43,12 +43,12 @@ Without ``dek`` all is confusion:
 
 .. code-block:: python
 
-    from dek import dek
+    import dek
 
     @dek
-    def print_before(func, label='debug'):
-        print(label, func)
-        return func()
+    def print_before(pfunc, label='debug'):
+        print(label, pfunc)
+        return pfunc()
 
 
 You can also use use defer mode for finer control over signatures:
@@ -57,6 +57,7 @@ You can also use use defer mode for finer control over signatures:
 
     @dek(defer=True)
     def print_before(func, label='debug'):
+
         def wrapped(foo, bar):
             print(label, foo, bar)
             return func(foo, bar)
@@ -84,6 +85,7 @@ else you could conceive of in a decorator library.
 
 """
 import functools
+import sys
 
 __all__ = ('dek',)
 __version__ = '0.10.3'
@@ -107,27 +109,27 @@ def _dek(decorator, defer=False, methods=None):
     dek has two modes, simple and defer.  Simple mode, the default,
     is less work but offers less control.
 
-    In **simple mode**, ``decorator`` is a single function that whose first
-    parameter is "the call that would have been made", represented as a
-    ``functools.partial()``.
-
-    This means the trivial decorator, the decorator that does nothing, is
-    trivial to write:
+    In **simple mode** the trivial decorator, the decorator that does nothing,
+    is trivial to write:
 
     .. code-block:: python
 
        @dek
-       def trivial(func):
-           return func()
+       def trivial(pfunc):
+           return pfunc()
+
+    In this mode, ``decorator``'s first argument is ``pfunc``,
+    a ``functools.partial()`` which bundles the original function together with
+    its arguments.
 
     Decorators with parameters aren't much harder:
 
     .. code-block:: python
 
        @dek
-       def print_before(func, label='debug'):
-           print(label, func.__name__, *args)
-           return func()
+       def print_before(pfunc, label='debug'):
+           print(label, pfunc)
+           return pfunc()
 
        @print_before
        def do_stuff(a, b='default'):
@@ -135,6 +137,8 @@ def _dek(decorator, defer=False, methods=None):
 
        do_stuff(1)
        # also prints 'debug do_stuff 1'
+
+    ----------------
 
     In **defer mode**, ``decorator`` is a function that returns a function
     that does the work.  This is more code but more flexible.
@@ -155,6 +159,8 @@ def _dek(decorator, defer=False, methods=None):
                return func(foo, bar)
 
            return wrapper
+
+    --------
 
     The ``methods`` parameter describe how classes (as opposed to functions or
     methods) are decorated.  It works in either simple or defer mode.
@@ -231,3 +237,18 @@ def _dek(decorator, defer=False, methods=None):
 
 
 dek = _dek(_dek, defer=True)
+
+
+class Dek:
+    def __getattr__(self, name):
+        try:
+            return globals()[name]
+        except KeyError:
+            return super().__getattr__(name)
+
+    @functools.wraps(dek)
+    def __call__(self, *args, **kwargs):
+        return dek(*args, **kwargs)
+
+
+sys.modules[__name__] = Dek()

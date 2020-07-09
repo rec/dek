@@ -1,4 +1,4 @@
-from dek import dek
+import dek
 import unittest
 
 
