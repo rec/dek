@@ -4,22 +4,24 @@
 
 ``dek`` decorates your decorators to diminish defects and drudgery.
 
-Writing a Python decorator with no parameters is easy.
+Writing a Python decorator which takes no parameters is easy.
 
 But writing a decorator with parameters requires three nested levels of
-function and offers several opportunities for error, more if you want to
-be able to decorate classes like ``unittest.mock.patch`` does.
+function and offers several opportunities for error - and more work
+if you want to decorate classes like ``unittest.mock.patch`` does.
 
-``dek`` is a decorator for decorators that handles all this.
+``dek`` is a decorator for decorators that does this deftly with a single
+Python function some 50 lines long.
 
-EXAMPLE:
+EXAMPLE
+---------
 
-Write a decorator ``print_before`` that prints a function's arguments with a
-label when it executes.
+Write a decorator ``print_before`` that prints a function's arguments with an
+optional label before it executes.
+
+Without ``dek`` all is confusion:
 
 .. code-block:: python
-
-    # Without dek all is confusion
 
     import functools
 
@@ -37,8 +39,10 @@ label when it executes.
 
         return deferred
 
+``dek`` handles all the boilerplate:
 
-    # Things go clearer with dek
+.. code-block:: python
+
     from dek import dek
 
     @dek
@@ -47,7 +51,10 @@ label when it executes.
         return func()
 
 
-    # Or use defer mode for more control
+You can also use use defer mode for finer control over signatures:
+
+.. code-block:: python
+
     @dek(defer=True)
     def print_before(func, label='debug'):
         def wrapped(foo, bar):
@@ -70,7 +77,7 @@ Decorators can be called in many ways:
 -decorators-that-take-parameters-b5a07d7fe393>`_ talks more about
 decorators that take parameters.
 
-For advanced problems, the PyPi library
+For advanced problems, the PyPi module
 `decorator <https://github.com/micheles/decorator/blob/master/docs/\
 documentation.md>`_ does not do what ``dek`` does, but does pretty anything
 else you could conceive of in a decorator library.
@@ -86,6 +93,16 @@ def _dek(decorator, defer=False, methods=None):
     """
     Decorate a decorator so it works with or without parameters and
     can decorate all the members of a class.
+
+    ARGUMENTS
+      decorator
+        The function being decorated
+
+      defer
+        Switch between "simple" and "defer" modes
+
+      methods
+        What to do with class methods when wrapping a class
 
     dek has two modes, simple and defer.  Simple mode, the default,
     is less work but offers less control.
