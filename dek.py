@@ -84,8 +84,8 @@ documentation.md>`_ does not do what ``dek`` does, but does pretty anything
 else you could conceive of in a decorator library.
 
 """
+import clod
 import functools
-import sys
 
 __all__ = ('dek',)
 __version__ = '0.10.3'
@@ -237,18 +237,4 @@ def _dek(decorator, defer=False, methods=None):
 
 
 dek = _dek(_dek, defer=True)
-
-
-class Dek:
-    def __getattr__(self, name):
-        try:
-            return globals()[name]
-        except KeyError:
-            return super().__getattr__(name)
-
-    @functools.wraps(dek)
-    def __call__(self, *args, **kwargs):
-        return dek(*args, **kwargs)
-
-
-sys.modules[__name__] = Dek()
+clod(dek, __name__)

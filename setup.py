@@ -1,5 +1,5 @@
+from pathlib import Path
 from setuptools import setup
-import dek
 
 _classifiers = [
     'Development Status :: 4 - Beta',
@@ -14,10 +14,19 @@ _classifiers = [
     'Topic :: Utilities',
 ]
 
+
+def _version():
+    with open('dek.py') as fp:
+        line = next(i for i in fp if i.startswith('__version__'))
+        return line.strip().split()[-1].strip("'")
+
+
+REQUIREMENTS = Path('requirements.txt').read_text().splitlines()
+
 if __name__ == '__main__':
     setup(
         name='dek',
-        version=dek.__version__,
+        version=_version(),
         author='Tom Ritchford',
         author_email='tom@swirly.com',
         url='https://github.com/rec/dek',
@@ -27,5 +36,5 @@ if __name__ == '__main__':
         license='MIT',
         classifiers=_classifiers,
         keywords=['testing', 'modules'],
-        scripts=['dek.py'],
+        install_requires=REQUIREMENTS,
     )
