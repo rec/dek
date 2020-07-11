@@ -1,3 +1,4 @@
+from pathlib import Path
 from setuptools import setup
 import dek
 
@@ -14,6 +15,8 @@ _classifiers = [
     'Topic :: Utilities',
 ]
 
+REQUIREMENTS = Path('requirements.txt').read_text().splitlines()
+
 if __name__ == '__main__':
     setup(
         name='dek',
@@ -27,5 +30,5 @@ if __name__ == '__main__':
         license='MIT',
         classifiers=_classifiers,
         keywords=['testing', 'modules'],
-        scripts=['dek.py'],
+        install_requires=REQUIREMENTS,
     )
