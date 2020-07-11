@@ -88,7 +88,7 @@ import clod
 import functools
 
 __all__ = ('dek',)
-__version__ = '0.10.3'
+__version__ = '0.10.4'
 
 
 def _dek(decorator, defer=False, methods=None):

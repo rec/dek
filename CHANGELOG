@@ -1,3 +1,10 @@
+## v0.10.4 - 20/07/11
+
+* Use clod to load the function as a module
+* Add clod to requirements.txt
+* Allow the dek module to be called directly
+* More documentation
+
 ## v0.10.3 - 20/07/07
 
 * Better handling of methods parameter
