@@ -56,6 +56,15 @@ class TestDek(unittest.TestCase):
         assert func(1, 2) == 3
         assert self.results == [(3, (1, 2), {}, 'TEST')]
 
+    def test_error(self):
+        with self.assertRaises(TypeError) as m:
+
+            @dek(methods=12)
+            def foo():
+                pass
+
+        assert m.exception.args[0] == 'Do not understand methods=12'
+
     def test_dek1(self):
         @self.decorator
         def func(a, b):

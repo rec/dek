@@ -11,7 +11,7 @@ function and offers several opportunities for error - and more work
 if you want to decorate classes like ``unittest.mock.patch`` does.
 
 ``dek`` is a decorator for decorators that does this deftly with a single
-Python function some 50 lines long.
+tiny function.
 
 EXAMPLE
 ---------
@@ -51,7 +51,7 @@ Without ``dek`` all is confusion:
         return pfunc()
 
 
-You can also use use defer mode for finer control over signatures:
+For finer control over function signatures there is deferred mode:
 
 .. code-block:: python
 
@@ -66,22 +66,13 @@ You can also use use defer mode for finer control over signatures:
 
 NOTES:
 
-Decorators can be called in many ways:
+`This article <https://medium.com/p/1277a9ed34dc/>`_ talks more about
+decorators that take parameters and about ``dek`` in general.
 
-* ``@print_before``
-* ``@print_before()``
-* ``@print_before('debug')``
-* ``@print_before(label='debug')``
-* ``@print_before('debug', verbose=True)``
-
-`This article <https://medium.com/better-programming/how-to-write-python\
--decorators-that-take-parameters-b5a07d7fe393>`_ talks more about
-decorators that take parameters.
-
-For advanced problems, the PyPi module
+For your advanced decorator problems, the PyPi module
 `decorator <https://github.com/micheles/decorator/blob/master/docs/\
-documentation.md>`_ does not do what ``dek`` does, but does pretty anything
-else you could conceive of in a decorator library.
+documentation.md>`_ does not duplicate duties that ``dek`` does, but does
+pretty anything else you could conceive of in a decorator library.
 
 """
 import clod
@@ -106,7 +97,7 @@ def _dek(decorator, defer=False, methods=None):
       methods
         What to do with class methods when wrapping a class
 
-    dek has two modes, simple and defer.  Simple mode, the default,
+    dek has two modes, simple and deferred.  Simple mode, the default,
     is less work but offers less control.
 
     In **simple mode** the trivial decorator, the decorator that does nothing,
@@ -140,7 +131,7 @@ def _dek(decorator, defer=False, methods=None):
 
     ----------------
 
-    In **defer mode**, ``decorator`` is a function that returns a function
+    In **deferred mode**, ``decorator`` is a function that returns a function
     that does the work.  This is more code but more flexible.
 
     .. code-block:: python
@@ -163,26 +154,26 @@ def _dek(decorator, defer=False, methods=None):
     --------
 
     The ``methods`` parameter describe how classes (as opposed to functions or
-    methods) are decorated.  It works in either simple or defer mode.
+    methods) are decorated.
 
     * If ``methods`` is ``None`` then classes are decorated like any callable.
-      If ``methods`` is _not_ ``None`` then classes are not decorated
+      If ``methods`` is _not_ ``None`` then classes are not decorated.
 
-    * If ``methods`` is a string then only methods whose names start
+    * If ``methods`` is a string, then only methods whose names start
       with that string are decorated (which means that if ``methods`` is
       the empty string, that all methods are decorated).
 
-    * If ``methods`` is a callable then only methods that return true when
-      passed to the callable are decorated
+    * If ``methods`` is a callable, then only methods that return true when
+      passed to the callable are decorated.
 
-    * If ``methods`` is ``True`` then only public, non-magic methods - methods
-      whose names do *not* start with ``_`` - are decorated
+    * If ``methods`` is ``True``, then only public, non-magic methods - methods
+      whose names do *not* start with ``_`` - are decorated.
 
-    * If ``methods`` is ``False`` then methods are not decorated (and neither
-      is the class)
+    * If ``methods`` is ``False``, then methods are not decorated (and neither
+      is the class).
     """
 
-    def is_public_method(m):
+    def is_public_non_magic_method(m):
         return not m.__name__.startswith('_')
 
     def is_named_method(m):
@@ -195,12 +186,13 @@ def _dek(decorator, defer=False, methods=None):
         if callable(methods):
             is_method = methods
         elif methods is True:
-            is_method = is_public_method
+            is_method = is_public_non_magic_method
         elif methods is False:
             is_method = no_method
-        else:
-            assert isinstance(methods, str)
+        elif isinstance(methods, str):
             is_method = is_named_method
+        else:
+            raise TypeError('Do not understand methods=%s' % methods)
 
     def decorate(func, *args_d, **kwargs_d):
         if methods is not None and isinstance(func, type):
