@@ -75,8 +75,8 @@ documentation.md>`_ does not duplicate duties that ``dek`` does, but does
 pretty anything else you could conceive of in a decorator library.
 
 """
-import clod
 import functools
+import xmod
 
 __all__ = ('dek',)
 __version__ = '0.10.4'
@@ -229,4 +229,4 @@ def _dek(decorator, defer=False, methods=None):
 
 
 dek = _dek(_dek, defer=True)
-clod(dek, __name__)
+xmod(dek)
