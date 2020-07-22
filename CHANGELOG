@@ -1,3 +1,8 @@
+## v0.10.5 - 20/07/22
+
+* Replace clod with xmod
+* Test an edge condition
+
 ## v0.10.4 - 20/07/11
 
 * Use clod to load the function as a module
