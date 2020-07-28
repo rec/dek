@@ -6,12 +6,11 @@
 
 Writing a Python decorator which takes no parameters is easy.
 
-But writing a decorator with parameters requires three nested levels of
-function and offers several opportunities for error - and more work
+But writing a decorator with parameters is less easy - and more work
 if you want to decorate classes like ``unittest.mock.patch`` does.
 
-``dek`` is a decorator for decorators that does this deftly with a single
-tiny function.
+``dek`` is a decorator for decorators that does this deftly with a
+single tiny function.
 
 EXAMPLE
 ---------
@@ -19,14 +18,14 @@ EXAMPLE
 Write a decorator ``print_before`` that prints a function's arguments with an
 optional label before it executes.
 
-Without ``dek`` all is confusion:
+Without ``dek``:
 
 .. code-block:: python
 
     import functools
 
-    def print_before(label='label'):
-        def deferred(func):
+    def print_before(func=None, label='label'):
+        if func:
             @functools.wraps(func)
             def wrapped(*args, **kwargs):
                 print(label, args, kwargs)
@@ -34,10 +33,7 @@ Without ``dek`` all is confusion:
 
             return wrapped
 
-        if callable(label):
-            return deferred(label)
-
-        return deferred
+        return functools.partial(print_before, label=label)
 
 ``dek`` handles all the boilerplate:
 
@@ -50,6 +46,8 @@ Without ``dek`` all is confusion:
         print(label, pfunc)
         return pfunc()
 
+``pfunc`` is a ``functools.partial`` that represents the call that your
+decorator intercepted.
 
 For finer control over function signatures there is deferred mode:
 
@@ -57,12 +55,42 @@ For finer control over function signatures there is deferred mode:
 
     @dek(defer=True)
     def print_before(func, label='debug'):
-
         def wrapped(foo, bar):
             print(label, foo, bar)
             return func(foo, bar)
 
         return wrapped
+
+And there's a ``methods`` setting that lets your decorator work well
+on classes, much like ``unittest.mock.patch`` does.
+
+.. code-block:: python
+
+    import dek
+
+    @dek(methods='test')
+    def print_before(pfunc):
+        print('HERE', *pfunc.args)
+        return pfunc()
+
+    @print_before
+    class Class:
+        def test_one(self):
+            return 1
+
+        def test_two(self):
+            return 2
+
+        def three(self):  # This won't get decorated
+            return 1
+
+
+    # Test at the command line:
+    >>> cl = Class()
+    >>> cl.test_one(), cl.test_two(), cl.three()
+    HERE 1
+    HERE 2
+    (1, 2, 3)
 
 NOTES:
 
@@ -110,8 +138,8 @@ def _dek(decorator, defer=False, methods=None):
            return pfunc()
 
     In this mode, ``decorator``'s first argument is ``pfunc``,
-    a ``functools.partial()`` which bundles the original function together with
-    its arguments.
+    a ``functools.partial()`` which bundles the original function called
+    together with its arguments.
 
     Decorators with parameters aren't much harder:
 
