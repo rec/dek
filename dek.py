@@ -181,15 +181,16 @@ def _dek(decorator, defer=False, methods=None):
 
     --------
 
-    The ``methods`` parameter describe how classes (as opposed to functions or
-    methods) are decorated.
+    The ``methods`` parameter describe how classes are decorated.
 
-    * If ``methods`` is ``None`` then classes are decorated like any callable.
-      If ``methods`` is _not_ ``None`` then classes are not decorated.
+    If ``methods`` is ``None`` then classes are decorated like any callable.
+
+    If ``methods`` is _not_ ``None``, then class methods are decorated
+    instead of the class itself:
 
     * If ``methods`` is a string, then only methods whose names start
       with that string are decorated (which means that if ``methods`` is
-      the empty string, that all methods are decorated).
+      the empty string, then all methods are decorated).
 
     * If ``methods`` is a callable, then only methods that return true when
       passed to the callable are decorated.
@@ -198,49 +199,45 @@ def _dek(decorator, defer=False, methods=None):
       whose names do *not* start with ``_`` - are decorated.
 
     * If ``methods`` is ``False``, then methods are not decorated (and neither
-      is the class).
+      are classes).
     """
 
-    def is_public_non_magic_method(m):
+    def is_public_non_magic(m):
         return not m.__name__.startswith('_')
 
-    def is_named_method(m):
+    def is_named(m):
         return m.__name__.startswith(methods)
 
-    def no_method(m):
+    def no(m):
         return False
 
     if methods is not None:
         if callable(methods):
-            is_method = methods
+            accept = methods
         elif methods is True:
-            is_method = is_public_non_magic_method
+            accept = is_public_non_magic
         elif methods is False:
-            is_method = no_method
+            accept = no
         elif isinstance(methods, str):
-            is_method = is_named_method
+            accept = is_named
         else:
             raise TypeError('Do not understand methods=%s' % methods)
 
-    def decorate(func, *args_d, **kwargs_d):
-        if methods is not None and isinstance(func, type):
+    def decorate(func, *args, **kwargs):
+        is_type = isinstance(func, type)
+
+        if methods is not None and is_type:
             for k, v in vars(func).items():
-                if callable(v) and not isinstance(v, type) and is_method(v):
-                    setattr(func, k, decorate(v, *args_d, **kwargs_d))
+                if callable(v) and not isinstance(v, type) and accept(v):
+                    setattr(func, k, decorate(v, *args, **kwargs))
             return func
 
         def simple_wrapper(*args_f, **kwargs_f):
             f = functools.partial(func, *args_f, **kwargs_f)
-            return decorator(f, *args_d, **kwargs_d)
+            return decorator(f, *args, **kwargs)
 
-        if defer:
-            wrapper = decorator(func, *args_d, **kwargs_d)
-        else:
-            wrapper = simple_wrapper
-
-        if not isinstance(func, type):
-            functools.update_wrapper(wrapper, func)
-        return wrapper
+        w = decorator(func, *args, **kwargs) if defer else simple_wrapper
+        return w if is_type else functools.update_wrapper(w, func)
 
     @functools.wraps(decorator)
     def wrapped(*args, **kwargs):
