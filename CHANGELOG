@@ -1,3 +1,8 @@
+## v0.10.6 - 20/09/06
+
+* Add MANIFEST.in
+* Simplify and clarify code
+
 ## v0.10.5 - 20/07/22
 
 * Replace clod with xmod
