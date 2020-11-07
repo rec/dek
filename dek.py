@@ -107,7 +107,7 @@ import functools
 import xmod
 
 __all__ = ('dek',)
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 def _dek(decorator, defer=False, methods=None):
