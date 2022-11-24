@@ -43,7 +43,7 @@ With ``dek``, it's a few lines:
     # Calling 64 9
 
 ``pfunc`` is a ``functools.partial`` that represents the call the decorator
-decorator intercepted.
+intercepted.
 
 Without ``dek`` it's actual work:
 
@@ -75,8 +75,8 @@ For finer control over function signatures there is deferred mode:
 
         return wrapped
 
-And there's a ``methods`` setting that lets your decorator work well
-on classes, much like ``unittest.mock.patch`` does.
+If you need to decorate methods on a class, there's a ``methods`` parameter to
+select which methods get decorated:
 
 .. code-block:: python
 
