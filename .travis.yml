@@ -15,3 +15,7 @@ install:
 script:
   - flake8
   - pytest
+
+branches:
+  only:
+    - master
