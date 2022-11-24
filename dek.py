@@ -4,10 +4,10 @@
 
 ``dek`` decorates your decorators to diminish defects and drudgery.
 
-Writing a Python decorator which takes no parameters is easy.
+Writing a Python decorator which takes no parameters isn't hard.
 
 But writing a decorator with parameters is less easy - and more work
-if you want to decorate classes like ``unittest.mock.patch`` does.
+if you want to decorate classes, like ``unittest.mock.patch`` does.
 
 ``dek`` is a decorator for decorators that does this deftly with a
 single tiny function.
@@ -15,16 +15,43 @@ single tiny function.
 EXAMPLE
 ---------
 
-Write a decorator ``print_before`` that prints a function's arguments with an
-optional label before it executes.
+Write a decorator ``before`` that prints a function's arguments with a
+label before it executes.
 
-Without ``dek``:
+With ``dek``, it's a few lines:
+
+.. code-block:: python
+
+    import dek
+
+    @dek
+    def before(pfunc, label='hey:'):
+        print(label, pfunc.func.__name__)
+        return pfunc()
+
+    # Done! To use your new decorator:
+
+    @before
+    def phone(two, four=4):
+        print('Calling', two + two, four * four)
+
+    one(32, four=3)
+
+    # That prints something like:
+    #
+    # hey: functools.partial(<function phone at 0x7fafa8072b00>, 32, four=3)
+    # Calling 64 9
+
+``pfunc`` is a ``functools.partial`` that represents the call the decorator
+decorator intercepted.
+
+Without ``dek`` it's actual work:
 
 .. code-block:: python
 
     import functools
 
-    def print_before(func=None, label='label'):
+    def before(func=None, label='label'):
         if func:
             @functools.wraps(func)
             def wrapped(*args, **kwargs):
@@ -33,28 +60,15 @@ Without ``dek``:
 
             return wrapped
 
-        return functools.partial(print_before, label=label)
+        return functools.partial(before, label=label)
 
-``dek`` handles all the boilerplate:
-
-.. code-block:: python
-
-    import dek
-
-    @dek
-    def print_before(pfunc, label='debug'):
-        print(label, pfunc)
-        return pfunc()
-
-``pfunc`` is a ``functools.partial`` that represents the call that your
-decorator intercepted.
 
 For finer control over function signatures there is deferred mode:
 
 .. code-block:: python
 
     @dek(defer=True)
-    def print_before(func, label='debug'):
+    def before(func, label='debug'):
         def wrapped(foo, bar):
             print(label, foo, bar)
             return func(foo, bar)
@@ -69,11 +83,11 @@ on classes, much like ``unittest.mock.patch`` does.
     import dek
 
     @dek(methods='test')
-    def print_before(pfunc):
+    def before(pfunc):
         print('HERE', *pfunc.args)
         return pfunc()
 
-    @print_before
+    @before
     class Class:
         def test_one(self):
             return 1
@@ -107,7 +121,6 @@ import functools
 import xmod
 
 __all__ = ('dek',)
-__version__ = '1.0.1'
 
 
 def _dek(decorator, defer=False, methods=None):
@@ -146,11 +159,11 @@ def _dek(decorator, defer=False, methods=None):
     .. code-block:: python
 
        @dek
-       def print_before(pfunc, label='debug'):
+       def before(pfunc, label='debug'):
            print(label, pfunc)
            return pfunc()
 
-       @print_before
+       @before
        def do_stuff(a, b='default'):
           # do stuff
 
@@ -172,7 +185,7 @@ def _dek(decorator, defer=False, methods=None):
            return wrapper
 
        @dek(defer=True)
-       def print_before(func, label='label'):
+       def before(func, label='label'):
            def wrapper(foo, bar):
                print(label, foo, bar)
                return func(foo, bar)
