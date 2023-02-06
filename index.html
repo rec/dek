@@ -1,0 +1,460 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.9">
+    
+    
+      
+        <title>🎴: `dek`: The decorator-decorator 🎴</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.0d440cfe.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deepOrange" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dek-the-decorator-decorator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="🎴: `dek`: The decorator-decorator 🎴" class="md-header__button md-logo" aria-label="🎴: `dek`: The decorator-decorator 🎴" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            🎴: `dek`: The decorator-decorator 🎴
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🎴: `dek`: The decorator-decorator 🎴
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="🎴: `dek`: The decorator-decorator 🎴" class="md-nav__button md-logo" aria-label="🎴: `dek`: The decorator-decorator 🎴" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    🎴: `dek`: The decorator-decorator 🎴
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          🎴: `dek`: The decorator-decorator 🎴
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        🎴: `dek`: The decorator-decorator 🎴
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dek" class="md-nav__link">
+    dek
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dek--dek-the-decorator-decorator" class="md-nav__link">
+    🗃 dek - the decorator-decorator 🗃
+  </a>
+  
+    <nav class="md-nav" aria-label="🗃 dek - the decorator-decorator 🗃">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dek--example" class="md-nav__link">
+    EXAMPLE
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dek" class="md-nav__link">
+    dek
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dek--dek-the-decorator-decorator" class="md-nav__link">
+    🗃 dek - the decorator-decorator 🗃
+  </a>
+  
+    <nav class="md-nav" aria-label="🗃 dek - the decorator-decorator 🗃">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dek--example" class="md-nav__link">
+    EXAMPLE
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dek-the-decorator-decorator">🎴: <code>dek</code>: The decorator-decorator 🎴</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+<a id="dek"></a>
+  <div class="doc doc-contents first">
+  
+      <h2 id="dek--dek-the-decorator-decorator">🗃 dek - the decorator-decorator 🗃</h2>
+<p><code>dek</code> decorates your decorators to diminish defects and drudgery.</p>
+<p>Writing a Python decorator which takes no parameters isn't hard.</p>
+<p>But writing a decorator with parameters is less easy - and more work
+if you want to decorate classes, like <code>unittest.mock.patch</code> does.</p>
+<p><code>dek</code> is a decorator for decorators that does this deftly with a
+single tiny function.</p>
+<h3 id="dek--example">EXAMPLE</h3>
+<p>Write a decorator <code>before</code> that prints a function's arguments with a
+label before it executes.</p>
+<p>With <code>dek</code>, it's a few lines:</p>
+<p>.. code-block:: python</p>
+<pre><code>import dek
+
+@dek
+def before(pfunc, label='hey:'):
+    print(label, pfunc.func.__name__)
+    return pfunc()
+
+# Done! To use your new decorator:
+
+@before
+def phone(two, four=4):
+    print('Calling', two + two, four * four)
+
+one(32, four=3)
+
+# That prints something like:
+#
+# hey: functools.partial(&lt;function phone at 0x7fafa8072b00&gt;, 32, four=3)
+# Calling 64 9
+</code></pre>
+<p><code>pfunc</code> is a <code>functools.partial</code> that represents the call the decorator
+intercepted.</p>
+<p>Without <code>dek</code> it's actual work:</p>
+<p>.. code-block:: python</p>
+<pre><code>import functools
+
+def before(func=None, label='label'):
+    if func:
+        @functools.wraps(func)
+        def wrapped(*args, **kwargs):
+            print(label, args, kwargs)
+            return func(*args, **kwargs)
+
+        return wrapped
+
+    return functools.partial(before, label=label)
+</code></pre>
+<p>For finer control over function signatures there is deferred mode:</p>
+<p>.. code-block:: python</p>
+<pre><code>@dek(defer=True)
+def before(func, label='debug'):
+    def wrapped(foo, bar):
+        print(label, foo, bar)
+        return func(foo, bar)
+
+    return wrapped
+</code></pre>
+<p>If you need to decorate methods on a class, there's a <code>methods</code> parameter to
+select which methods get decorated:</p>
+<p>.. code-block:: python</p>
+<pre><code>import dek
+
+@dek(methods='test')
+def before(pfunc):
+    print('HERE', *pfunc.args)
+    return pfunc()
+
+@before
+class Class:
+    def test_one(self):
+        return 1
+
+    def test_two(self):
+        return 2
+
+    def three(self):  # This won't get decorated
+        return 1
+
+
+# Test at the command line:
+&gt;&gt;&gt; cl = Class()
+&gt;&gt;&gt; cl.test_one(), cl.test_two(), cl.three()
+HERE 1
+HERE 2
+(1, 2, 3)
+</code></pre>
+<p>NOTES:</p>
+<p><code>This article &lt;https://medium.com/p/1277a9ed34dc/&gt;</code>_ talks more about
+decorators that take parameters and about <code>dek</code> in general.</p>
+<p>For your advanced decorator problems, the PyPi module
+<code>decorator &lt;https://github.com/micheles/decorator/blob/master/docs/documentation.md&gt;</code>_ does not duplicate duties that <code>dek</code> does, but does
+pretty anything else you could conceive of in a decorator library.</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.a00a7c5e.min.js"></script>
+      
+    
+  </body>
+</html>
