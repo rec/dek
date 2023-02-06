@@ -1,0 +1,19 @@
+site_name: '🎴: `dek`: The decorator-decorator 🎴'
+
+theme:
+  name: material
+
+  palette:
+    primary:
+      'deepOrange'
+
+  font:
+    text:
+      Roboto
+    code:
+      Roboto Mono
+
+extra_css: [extra.css]
+
+plugins:
+    - mkdocstrings
