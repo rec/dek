@@ -20,7 +20,6 @@ label before it executes.
 
 With ``dek``, it's a few lines:
 
-.. code-block:: python
 
     import dek
 
@@ -47,7 +46,6 @@ intercepted.
 
 Without ``dek`` it's actual work:
 
-.. code-block:: python
 
     import functools
 
@@ -65,7 +63,6 @@ Without ``dek`` it's actual work:
 
 For finer control over function signatures there is deferred mode:
 
-.. code-block:: python
 
     @dek(defer=True)
     def before(func, label='debug'):
@@ -78,7 +75,6 @@ For finer control over function signatures there is deferred mode:
 If you need to decorate methods on a class, there's a ``methods`` parameter to
 select which methods get decorated:
 
-.. code-block:: python
 
     import dek
 
@@ -144,7 +140,6 @@ def _dek(decorator, defer=False, methods=None):
     In **simple mode** the trivial decorator, the decorator that does nothing,
     is trivial to write:
 
-    .. code-block:: python
 
        @dek
        def trivial(pfunc):
@@ -156,7 +151,6 @@ def _dek(decorator, defer=False, methods=None):
 
     Decorators with parameters aren't much harder:
 
-    .. code-block:: python
 
        @dek
        def before(pfunc, label='debug'):
@@ -175,7 +169,6 @@ def _dek(decorator, defer=False, methods=None):
     In **deferred mode**, ``decorator`` is a function that returns a function
     that does the work.  This is more code but more flexible.
 
-    .. code-block:: python
 
        @dek(defer=True)
        def trivial(func):
