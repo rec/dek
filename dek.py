@@ -1,34 +1,31 @@
 """
-🗃 dek - the decorator-decorator 🗃
-======================================================
+🗃 `dek` - the decorator-decorator 🗃
 
-``dek`` decorates your decorators to diminish defects and drudgery.
+`dek` decorates your decorators to diminish defects and drudgery.
 
 Writing a Python decorator which takes no parameters isn't hard.
 
 But writing a decorator with parameters is less easy - and more work
-if you want to decorate classes, like ``unittest.mock.patch`` does.
+if you want to decorate classes, like `unittest.mock.patch` does.
 
-``dek`` is a decorator for decorators that does this deftly with a
+`dek` is a decorator for decorators that does this deftly with a
 single tiny function.
 
-EXAMPLE
----------
+## Example 1: a simple decorator with dek
 
-Write a decorator ``before`` that prints a function's arguments with a
+Write a decorator `before` that prints a function's arguments with a
 label before it executes.
 
-With ``dek``, it's a few lines:
-
+With `dek`, it's a few lines:
 
     import dek
 
     @dek
-    def before(pfunc, label='hey:'):
-        print(label, pfunc.func.__name__)
+    def before(pfunc):
+        print(pfunc.func.__name__)
         return pfunc()
 
-    # Done! To use your new decorator:
+Done! To use your new decorator:
 
     @before
     def phone(two, four=4):
@@ -41,16 +38,58 @@ With ``dek``, it's a few lines:
     # hey: functools.partial(<function phone at 0x7fafa8072b00>, 32, four=3)
     # Calling 64 9
 
-``pfunc`` is a ``functools.partial`` that represents the call the decorator
-intercepted.
+(What's `pfunc`?  It is a `functools.partial` that represents the function call
+that `dek` intercepted - a convenient way to hold the arguments and keyword
+arguments to the function you are decorating.)
 
-Without ``dek`` it's actual work:
+## Example 2: same, without `dek`
 
+    import functools
+
+    def before(func):
+        @functools.wraps(func)
+        def wrapped(*args, **kwargs):
+            print(args, kwargs)
+            return func(*args, **kwargs)
+
+        return wrapped
+
+With `dek` it's a bit less work, but the real advantage comes when you have
+a decorator with a parameter.
+
+## Example 3: a decorator with a single optional parameter
+
+Write a decorator `before` that prints a function's arguments _with a
+label_ before it executes.
+
+With `dek`, it's a trivial change from the previous one.
+
+    import dek
+
+    @dek
+    def before(pfunc, label='my label'):
+        print(label, pfunc.func.__name__)
+        return pfunc()
+
+And you get an optional label.
+
+    @before
+    def add(x, y):
+        return x + y
+
+    @before(label='Exciting!')
+    def times(x, y):
+        return x * y
+
+
+## Example 4: same, without `dek`
+
+Without `dek` it's actual work that's easy to get wrong.
 
     import functools
 
     def before(func=None, label='label'):
-        if func:
+        if func is not None:
             @functools.wraps(func)
             def wrapped(*args, **kwargs):
                 print(label, args, kwargs)
@@ -61,8 +100,9 @@ Without ``dek`` it's actual work:
         return functools.partial(before, label=label)
 
 
-For finer control over function signatures there is deferred mode:
+## Example 5: Deferred mode
 
+For finer control over function signatures there is deferred mode.
 
     @dek(defer=True)
     def before(func, label='debug'):
@@ -72,8 +112,10 @@ For finer control over function signatures there is deferred mode:
 
         return wrapped
 
-If you need to decorate methods on a class, there's a ``methods`` parameter to
-select which methods get decorated:
+## Example 6: Decorating a class
+
+If you need to decorate methods on a class, there's a `methods` parameter to
+select which methods get decorated.
 
 
     import dek
@@ -105,34 +147,33 @@ select which methods get decorated:
 NOTES:
 
 `This article <https://medium.com/p/1277a9ed34dc/>`_ talks more about
-decorators that take parameters and about ``dek`` in general.
+decorators that take parameters and about `dek` in general.
 
 For your advanced decorator problems, the PyPi module
 `decorator <https://github.com/micheles/decorator/blob/master/docs/\
-documentation.md>`_ does not duplicate duties that ``dek`` does, but does
+documentation.md>`_ does not duplicate duties that `dek` does, but does
 pretty anything else you could conceive of in a decorator library.
 
 """
+from typing import Callable
 import functools
 import xmod
 
 __all__ = ('dek',)
 
 
-def _dek(decorator, defer=False, methods=None):
+def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
     """
     Decorate a decorator so it works with or without parameters and
     can decorate all the members of a class.
 
-    ARGUMENTS
-      decorator
-        The function being decorated
+    Args:
+      decorator: The function being decorated
+      defer:     Switch between "simple" and "defer" modes
+      methods:   What to do with class methods when wrapping a class
 
-      defer
-        Switch between "simple" and "defer" modes
-
-      methods
-        What to do with class methods when wrapping a class
+    Returns:
+      A decorated function
 
     dek has two modes, simple and deferred.  Simple mode, the default,
     is less work but offers less control.
@@ -145,8 +186,8 @@ def _dek(decorator, defer=False, methods=None):
        def trivial(pfunc):
            return pfunc()
 
-    In this mode, ``decorator``'s first argument is ``pfunc``,
-    a ``functools.partial()`` which bundles the original function called
+    In this mode, `decorator`'s first argument is `pfunc`,
+    a `functools.partial()` which bundles the original function called
     together with its arguments.
 
     Decorators with parameters aren't much harder:
@@ -166,7 +207,7 @@ def _dek(decorator, defer=False, methods=None):
 
     ----------------
 
-    In **deferred mode**, ``decorator`` is a function that returns a function
+    In **deferred mode**, `decorator` is a function that returns a function
     that does the work.  This is more code but more flexible.
 
 
@@ -187,24 +228,24 @@ def _dek(decorator, defer=False, methods=None):
 
     --------
 
-    The ``methods`` parameter describe how classes are decorated.
+    The `methods` parameter describe how classes are decorated.
 
-    If ``methods`` is ``None`` then classes are decorated like any callable.
+    If `methods` is `None` then classes are decorated like any callable.
 
-    If ``methods`` is _not_ ``None``, then class methods are decorated
+    If `methods` is _not_ `None`, then class methods are decorated
     instead of the class itself:
 
-    * If ``methods`` is a string, then only methods whose names start
-      with that string are decorated (which means that if ``methods`` is
+    * If `methods` is a string, then only methods whose names start
+      with that string are decorated (which means that if `methods` is
       the empty string, then all methods are decorated).
 
-    * If ``methods`` is a callable, then only methods that return true when
+    * If `methods` is a callable, then only methods that return true when
       passed to the callable are decorated.
 
-    * If ``methods`` is ``True``, then only public, non-magic methods - methods
-      whose names do *not* start with ``_`` - are decorated.
+    * If `methods` is `True`, then only public, non-magic methods - methods
+      whose names do *not* start with `_` - are decorated.
 
-    * If ``methods`` is ``False``, then methods are not decorated (and neither
+    * If `methods` is `False`, then methods are not decorated (and neither
       are classes).
     """
 
@@ -220,12 +261,16 @@ def _dek(decorator, defer=False, methods=None):
     if methods is not None:
         if callable(methods):
             accept = methods
+
         elif methods is True:
             accept = is_public_non_magic
+
         elif methods is False:
             accept = no
+
         elif isinstance(methods, str):
             accept = is_named
+
         else:
             raise TypeError('Do not understand methods=%s' % methods)
 
