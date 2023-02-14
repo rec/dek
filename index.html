@@ -189,19 +189,47 @@
     dek
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dek--dek-the-decorator-decorator" class="md-nav__link">
-    &#128451; dek - the decorator-decorator &#128451;
-  </a>
-  
-    <nav class="md-nav" aria-label="&#128451; dek - the decorator-decorator &#128451;">
+    <nav class="md-nav" aria-label="dek">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#dek--example" class="md-nav__link">
-    EXAMPLE
+  <a href="#dek--example-1-a-simple-decorator-with-dek" class="md-nav__link">
+    Example 1: a simple decorator with dek
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-2-same-without-dek" class="md-nav__link">
+    Example 2: same, without dek
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-3-a-decorator-with-a-single-optional-parameter" class="md-nav__link">
+    Example 3: a decorator with a single optional parameter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-4-same-without-dek" class="md-nav__link">
+    Example 4: same, without dek
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-5-deferred-mode" class="md-nav__link">
+    Example 5: Deferred mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-6-decorating-a-class" class="md-nav__link">
+    Example 6: Decorating a class
   </a>
   
 </li>
@@ -212,15 +240,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dek--test-at-the-command-line" class="md-nav__link">
-    Test at the command line:
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#more-info" class="md-nav__link">
-    More info
+  <a href="#about-this-project" class="md-nav__link">
+    About this project
   </a>
   
 </li>
@@ -264,19 +285,47 @@
     dek
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dek--dek-the-decorator-decorator" class="md-nav__link">
-    &#128451; dek - the decorator-decorator &#128451;
-  </a>
-  
-    <nav class="md-nav" aria-label="&#128451; dek - the decorator-decorator &#128451;">
+    <nav class="md-nav" aria-label="dek">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#dek--example" class="md-nav__link">
-    EXAMPLE
+  <a href="#dek--example-1-a-simple-decorator-with-dek" class="md-nav__link">
+    Example 1: a simple decorator with dek
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-2-same-without-dek" class="md-nav__link">
+    Example 2: same, without dek
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-3-a-decorator-with-a-single-optional-parameter" class="md-nav__link">
+    Example 3: a decorator with a single optional parameter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-4-same-without-dek" class="md-nav__link">
+    Example 4: same, without dek
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-5-deferred-mode" class="md-nav__link">
+    Example 5: Deferred mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dek--example-6-decorating-a-class" class="md-nav__link">
+    Example 6: Decorating a class
   </a>
   
 </li>
@@ -287,15 +336,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dek--test-at-the-command-line" class="md-nav__link">
-    Test at the command line:
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#more-info" class="md-nav__link">
-    More info
+  <a href="#about-this-project" class="md-nav__link">
+    About this project
   </a>
   
 </li>
@@ -316,35 +358,31 @@
 
 
 
-<h1 id="dek-the-decorator-decorator">&#127924;: <code>dek</code>: The decorator-decorator &#127924;</h1>
-
-
 <div class="doc doc-object doc-module">
 
 
 <a id="dek"></a>
   <div class="doc doc-contents first">
   
-      <h2 id="dek--dek-the-decorator-decorator">&#128451; dek - the decorator-decorator &#128451;</h2>
+      <p><code>dek</code> decorates your decorators to diminish defects and drudgery.</p>
 <p>Writing a Python decorator which takes no parameters isn't hard.</p>
 <p>But writing a decorator with parameters is less easy - and more work
 if you want to decorate classes, like <code>unittest.mock.patch</code> does.</p>
 <p><code>dek</code> is a decorator for decorators that does this deftly with a
 single tiny function.</p>
-<h3 id="dek--example">EXAMPLE</h3>
+<h3 id="dek--example-1-a-simple-decorator-with-dek">Example 1: a simple decorator with dek</h3>
 <p>Write a decorator <code>before</code> that prints a function's arguments with a
 label before it executes.</p>
 <p>With <code>dek</code>, it's a few lines:</p>
 <pre><code>import dek
 
 @dek
-def before(pfunc, label='hey:'):
-    print(label, pfunc.func.__name__)
+def before(pfunc):
+    print(pfunc.func.__name__)
     return pfunc()
-
-# Done! To use your new decorator:
-
-@before
+</code></pre>
+<p>Done! To use your new decorator:</p>
+<pre><code>@before
 def phone(two, four=4):
     print('Calling', two + two, four * four)
 
@@ -355,13 +393,50 @@ one(32, four=3)
 # hey: functools.partial(&lt;function phone at 0x7fafa8072b00&gt;, 32, four=3)
 # Calling 64 9
 </code></pre>
-<p><code>pfunc</code> is a <code>functools.partial</code> that represents the call the decorator
-intercepted.</p>
-<p>Without <code>dek</code> it's actual work:</p>
+<p>(What's <code>pfunc</code>?  It is a <code>functools.partial</code> that represents the function call
+that <code>dek</code> intercepted - a convenient way to hold the arguments and keyword
+arguments to the function you are decorating.)</p>
+<h3 id="dek--example-2-same-without-dek">Example 2: same, without <code>dek</code>
+</h3>
+<pre><code>import functools
+
+def before(func):
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        print(args, kwargs)
+        return func(*args, **kwargs)
+
+    return wrapped
+</code></pre>
+<p>With <code>dek</code> it's a bit less work, but the real advantage comes when you have
+a decorator with a parameter.</p>
+<h3 id="dek--example-3-a-decorator-with-a-single-optional-parameter">Example 3: a decorator with a single optional parameter</h3>
+<p>Write a decorator <code>before</code> that prints a function's arguments <em>with a
+label</em> before it executes.</p>
+<p>With <code>dek</code>, it's a trivial change from the previous one.</p>
+<pre><code>import dek
+
+@dek
+def before(pfunc, label='my label'):
+    print(label, pfunc.func.__name__)
+    return pfunc()
+</code></pre>
+<p>And you get an optional label.</p>
+<pre><code>@before
+def add(x, y):
+    return x + y
+
+@before(label='Exciting!')
+def times(x, y):
+    return x * y
+</code></pre>
+<h3 id="dek--example-4-same-without-dek">Example 4: same, without <code>dek</code>
+</h3>
+<p>Without <code>dek</code> it's actual work that's easy to get wrong.</p>
 <pre><code>import functools
 
 def before(func=None, label='label'):
-    if func:
+    if func is not None:
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
             print(label, args, kwargs)
@@ -371,48 +446,46 @@ def before(func=None, label='label'):
 
     return functools.partial(before, label=label)
 </code></pre>
-
-<details class="for-finer-control-over-function-signatures-there-is-deferred-mode">
-  <summary>For finer control over function signatures there is deferred mode</summary>
-  <p>@dek(defer=True)
+<h3 id="dek--example-5-deferred-mode">Example 5: Deferred mode</h3>
+<p>For finer control over function signatures there is deferred mode.</p>
+<pre><code>@dek(defer=True)
 def before(func, label='debug'):
     def wrapped(foo, bar):
         print(label, foo, bar)
-        return func(foo, bar)</p>
-<pre><code>return wrapped
-</code></pre>
-</details>      <p>If you need to decorate methods on a class, there's a <code>methods</code> parameter to</p>
+        return func(foo, bar)
 
-<details class="select-which-methods-get-decorated">
-  <summary>select which methods get decorated</summary>
-  <p>import dek</p>
-<p>@dek(methods='test')
+    return wrapped
+</code></pre>
+<h3 id="dek--example-6-decorating-a-class">Example 6: Decorating a class</h3>
+<p>If you need to decorate methods on a class, there's a <code>methods</code> parameter to
+select which methods get decorated.</p>
+<pre><code>import dek
+
+@dek(methods='test')
 def before(pfunc):
     print('HERE', *pfunc.args)
-    return pfunc()</p>
-<p>@before
+    return pfunc()
+
+@before
 class Class:
     def test_one(self):
-        return 1</p>
-<pre><code>def test_two(self):
-    return 2
+        return 1
 
-def three(self):  # This won't get decorated
-    return 1
-</code></pre>
-<h2 id="dek--test-at-the-command-line">Test at the command line:</h2>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>cl = Class()
-cl.test_one(), cl.test_two(), cl.three()
+    def test_two(self):
+        return 2
+
+    def three(self):  # This won't get decorated
+        return 1
+
+
+# Test at the command line:
+&gt;&gt;&gt; cl = Class()
+&gt;&gt;&gt; cl.test_one(), cl.test_two(), cl.three()
 HERE 1
 HERE 2
-(1, 2, 3)</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</details>      <p>NOTES:</p>
+(1, 2, 3)
+</code></pre>
+<p>NOTES:</p>
 <p><code>This article &lt;https://medium.com/p/1277a9ed34dc/&gt;</code>_ talks more about
 decorators that take parameters and about <code>dek</code> in general.</p>
 <p>For your advanced decorator problems, the PyPi module
@@ -421,7 +494,10 @@ pretty anything else you could conceive of in a decorator library.</p>
 
   
 
-  <div class="doc doc-children">
+  <hr>
+<p></p>
+<h1>API Documentation</h1>
+<div class="doc doc-children">
 
 
 
@@ -438,10 +514,10 @@ pretty anything else you could conceive of in a decorator library.</p>
   </div>
 
 </div>
-<h2 id="more-info">More info</h2>
+<h2 id="about-this-project">About this project</h2>
 <ul>
-<li><a href="https://github.com/rec/dek"> Code </a></li>
-<li><a href="https://github.com/rec"> Me </a></li>
+<li><a href="https://github.com/rec/dek"> Source code </a></li>
+<li><a href="https://github.com/rec"> More by this author </a></li>
 <li><a href="https://github.com/sponsors/rec"> Sponsors </a></li>
 </ul>
 
