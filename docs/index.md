@@ -2,8 +2,8 @@
 
 ::: dek
 
-## More info
+## About this project
 
-* [ Code ]( https://github.com/rec/dek )
-* [ Me ]( https://github.com/rec )
+* [ Source code ]( https://github.com/rec/dek )
+* [ More by this author ]( https://github.com/rec )
 * [ Sponsors ]( https://github.com/sponsors/rec )
