@@ -365,14 +365,14 @@ if you want to decorate classes, like <code>unittest.mock.patch</code> does.</p>
 <p><code>dek</code> is a decorator for decorators that does this deftly with a
 single tiny function.</p>
 <h3 id="dek--example-1-a-simple-decorator-with-dek">Example 1: a simple decorator with dek</h3>
-<p>Write a decorator <code>before</code> that prints a function's arguments with a
-label before it executes.</p>
+<p>TASK: write a decorator <code>before</code> that prints a function's name and its
+arguments before it executes.</p>
 <p>With <code>dek</code>, it's a few lines:</p>
 <pre><code>import dek
 
 @dek
 def before(pfunc):
-    print(pfunc.func.__name__)
+    print(pfunc)
     return pfunc()
 </code></pre>
 <p>Done! To use your new decorator:</p>
@@ -384,12 +384,12 @@ one(32, four=3)
 
 # That prints something like:
 #
-# hey: functools.partial(&lt;function phone at 0x7fafa8072b00&gt;, 32, four=3)
+# functools.partial(&lt;function phone at 0x7fafa8072b00&gt;, 32, four=3)
 # Calling 64 9
 </code></pre>
-<p>(What's <code>pfunc</code>?  It is a <code>functools.partial</code> that represents the function call
-that <code>dek</code> intercepted - a convenient way to hold the arguments and keyword
-arguments to the function you are decorating.)</p>
+<p><code>pfunc</code> is a <a href="https://docs.python.org/3/library/functools.html#functools.partial"><code>functools.partial</code></a>,
+which represents the function call that <code>dek</code> intercepted.  Your code
+can call <code>pfunc</code> as often as you like, or add or change parameters.</p>
 <h3 id="dek--example-2-same-without-dek">Example 2: same, without <code>dek</code>
 </h3>
 <pre><code>import functools
@@ -397,7 +397,7 @@ arguments to the function you are decorating.)</p>
 def before(func):
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
-        print(args, kwargs)
+        print(func, args, kwargs)
         return func(*args, **kwargs)
 
     return wrapped
@@ -405,35 +405,41 @@ def before(func):
 <p>With <code>dek</code> it's a bit less work, but the real advantage comes when you have
 a decorator with a parameter.</p>
 <h3 id="dek--example-3-a-decorator-with-a-single-optional-parameter">Example 3: a decorator with a single optional parameter</h3>
-<p>Write a decorator <code>before</code> that prints a function's arguments <em>with a
-label</em> before it executes.</p>
-<p>With <code>dek</code>, it's a trivial change from the previous one.</p>
+<p>Write a decorator <code>before</code> that prints a function's name, arguments
+<em>and a label</em> before it executes.</p>
+<p>With <code>dek</code>, it's a trivial change from the previous solution.</p>
 <pre><code>import dek
 
 @dek
-def before(pfunc, label='my label'):
-    print(label, pfunc.func.__name__)
+def before(pfunc, label='dull'):
+    print(label, pfunc.func, *pfunc.args)
     return pfunc()
-</code></pre>
-<p>And you get an optional label.</p>
-<pre><code>@before
+
+@before
 def add(x, y):
     return x + y
 
 @before(label='Exciting!')
 def times(x, y):
     return x * y
+
+print('Result', add(2, times(2, 3)))
+
+# Prints:
+#   Exciting! times 2 3
+#   dull add 2 6
+#   Result 8
 </code></pre>
 <h3 id="dek--example-4-same-without-dek">Example 4: same, without <code>dek</code>
 </h3>
 <p>Without <code>dek</code> it's actual work that's easy to get wrong.</p>
 <pre><code>import functools
 
-def before(func=None, label='label'):
+def before(func=None, label='dull'):
     if func is not None:
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
-            print(label, args, kwargs)
+            print(label, func.__name, *args)
             return func(*args, **kwargs)
 
         return wrapped
@@ -441,7 +447,9 @@ def before(func=None, label='label'):
     return functools.partial(before, label=label)
 </code></pre>
 <h3 id="dek--example-5-deferred-mode">Example 5: Deferred mode</h3>
-<p>For finer control over function signatures there is deferred mode.</p>
+<p>For finer control over function signatures there is deferred mode, which
+lets you select what sort of signature you want to expose with a <code>wrapped</code>
+function that you create.</p>
 <pre><code>@dek(defer=True)
 def before(func, label='debug'):
     def wrapped(foo, bar):
@@ -480,7 +488,7 @@ HERE 2
 (1, 2, 3)
 </code></pre>
 <p>NOTES:</p>
-<p><code>This article &lt;https://medium.com/p/1277a9ed34dc/&gt;</code>_ talks more about
+<p><a href="https://medium.com/p/1277a9ed34dc/">This article</a> talks more about
 decorators that take parameters and about <code>dek</code> in general.</p>
 <p>For your advanced decorator desires, the PyPi module
 <a href="https://github.com/micheles/decorator/blob/master/docs/documentation.md"><code>decorator</code></a> does not duplicate duties that <code>dek</code> does, but does
