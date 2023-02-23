@@ -13,8 +13,8 @@ single tiny function.
 
 ## Example 1: a simple decorator with dek
 
-Write a decorator `before` that prints a function's arguments with a
-label before it executes.
+TASK: write a decorator `before` that prints a function's name and its
+arguments before it executes.
 
 With `dek`, it's a few lines:
 
@@ -22,7 +22,7 @@ With `dek`, it's a few lines:
 
     @dek
     def before(pfunc):
-        print(pfunc.func.__name__)
+        print(pfunc)
         return pfunc()
 
 Done! To use your new decorator:
@@ -35,12 +35,13 @@ Done! To use your new decorator:
 
     # That prints something like:
     #
-    # hey: functools.partial(<function phone at 0x7fafa8072b00>, 32, four=3)
+    # functools.partial(<function phone at 0x7fafa8072b00>, 32, four=3)
     # Calling 64 9
 
-(What's `pfunc`?  It is a `functools.partial` that represents the function call
-that `dek` intercepted - a convenient way to hold the arguments and keyword
-arguments to the function you are decorating.)
+`pfunc` is a [`functools.partial`](
+https://docs.python.org/3/library/functools.html#functools.partial),
+which represents the function call that `dek` intercepted.  Your code
+can call `pfunc` as often as you like, or add or change parameters.
 
 ## Example 2: same, without `dek`
 
@@ -49,7 +50,7 @@ arguments to the function you are decorating.)
     def before(func):
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
-            print(args, kwargs)
+            print(func, args, kwargs)
             return func(*args, **kwargs)
 
         return wrapped
@@ -59,19 +60,17 @@ a decorator with a parameter.
 
 ## Example 3: a decorator with a single optional parameter
 
-Write a decorator `before` that prints a function's arguments _with a
-label_ before it executes.
+Write a decorator `before` that prints a function's name, arguments
+_and a label_ before it executes.
 
-With `dek`, it's a trivial change from the previous one.
+With `dek`, it's a trivial change from the previous solution.
 
     import dek
 
     @dek
-    def before(pfunc, label='my label'):
-        print(label, pfunc.func.__name__)
+    def before(pfunc, label='dull'):
+        print(label, pfunc.func, *pfunc.args)
         return pfunc()
-
-And you get an optional label.
 
     @before
     def add(x, y):
@@ -81,6 +80,13 @@ And you get an optional label.
     def times(x, y):
         return x * y
 
+    print('Result', add(2, times(2, 3)))
+
+    # Prints:
+    #   Exciting! times 2 3
+    #   dull add 2 6
+    #   Result 8
+
 
 ## Example 4: same, without `dek`
 
@@ -88,11 +94,11 @@ Without `dek` it's actual work that's easy to get wrong.
 
     import functools
 
-    def before(func=None, label='label'):
+    def before(func=None, label='dull'):
         if func is not None:
             @functools.wraps(func)
             def wrapped(*args, **kwargs):
-                print(label, args, kwargs)
+                print(label, func.__name, *args)
                 return func(*args, **kwargs)
 
             return wrapped
@@ -102,7 +108,9 @@ Without `dek` it's actual work that's easy to get wrong.
 
 ## Example 5: Deferred mode
 
-For finer control over function signatures there is deferred mode.
+For finer control over function signatures there is deferred mode, which
+lets you select what sort of signature you want to expose with a `wrapped`
+function that you create.
 
     @dek(defer=True)
     def before(func, label='debug'):
@@ -146,14 +154,13 @@ select which methods get decorated.
 
 NOTES:
 
-`This article <https://medium.com/p/1277a9ed34dc/>`_ talks more about
+[This article](https://medium.com/p/1277a9ed34dc/) talks more about
 decorators that take parameters and about `dek` in general.
 
 For your advanced decorator desires, the PyPi module
 [`decorator`](https://github.com/micheles/decorator/blob/master/docs/\
 documentation.md) does not duplicate duties that `dek` does, but does
 pretty anything else you could conceive of in a decorator library.
-
 """
 from typing import Callable
 import functools
