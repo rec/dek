@@ -149,9 +149,9 @@ NOTES:
 `This article <https://medium.com/p/1277a9ed34dc/>`_ talks more about
 decorators that take parameters and about `dek` in general.
 
-For your advanced decorator problems, the PyPi module
-`decorator <https://github.com/micheles/decorator/blob/master/docs/\
-documentation.md>`_ does not duplicate duties that `dek` does, but does
+For your advanced decorator desires, the PyPi module
+[`decorator`](https://github.com/micheles/decorator/blob/master/docs/\
+documentation.md) does not duplicate duties that `dek` does, but does
 pretty anything else you could conceive of in a decorator library.
 
 """
@@ -178,13 +178,13 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
     dek has two modes, simple and deferred.  Simple mode, the default,
     is less work but offers less control.
 
-    In **simple mode** the trivial decorator, the decorator that does nothing,
+    In *simple mode* the trivial decorator, the decorator that does nothing,
     is trivial to write:
 
 
-       @dek
-       def trivial(pfunc):
-           return pfunc()
+        @dek
+        def trivial(pfunc):
+            return pfunc()
 
     In this mode, `decorator`'s first argument is `pfunc`,
     a `functools.partial()` which bundles the original function called
@@ -193,38 +193,38 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
     Decorators with parameters aren't much harder:
 
 
-       @dek
-       def before(pfunc, label='debug'):
-           print(label, pfunc)
-           return pfunc()
+        @dek
+        def before(pfunc, label='debug'):
+            print(label, pfunc)
+            return pfunc()
 
-       @before
-       def do_stuff(a, b='default'):
-          # do stuff
+        @before
+        def do_stuff(a, b='default'):
+           # do stuff
 
-       do_stuff(1)
-       # also prints 'debug do_stuff 1'
+        do_stuff(1)
+        # also prints 'debug do_stuff 1'
 
     ----------------
 
-    In **deferred mode**, `decorator` is a function that returns a function
+    In *deferred mode*, `decorator` is a function that returns a function
     that does the work.  This is more code but more flexible.
 
 
-       @dek(defer=True)
-       def trivial(func):
-           def wrapper(*args, **kwargs):
-               return func(*args, **kwargs)
+        @dek(defer=True)
+        def trivial(func):
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
 
-           return wrapper
+            return wrapper
 
-       @dek(defer=True)
-       def before(func, label='label'):
-           def wrapper(foo, bar):
-               print(label, foo, bar)
-               return func(foo, bar)
+        @dek(defer=True)
+        def before(func, label='label'):
+            def wrapper(foo, bar):
+                print(label, foo, bar)
+                return func(foo, bar)
 
-           return wrapper
+            return wrapper
 
     --------
 
@@ -304,5 +304,5 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
     return wrapped
 
 
-dek = _dek(_dek, defer=True)
+dek = _dek(_dek, defer=True)  # dek decorates itself
 xmod(dek)
