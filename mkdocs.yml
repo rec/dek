@@ -5,7 +5,7 @@ theme:
 
   palette:
     primary:
-      'deepOrange'
+      'lightGreen'
 
   font:
     text:
