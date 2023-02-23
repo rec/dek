@@ -1,4 +1,4 @@
-# 🗃 `dek` - the decorator-decorator 🗃
+🗃 `dek` - the decorator-decorator 🗃
 
 `dek` decorates your decorators to diminish defects and drudgery.
 
@@ -148,8 +148,8 @@ NOTES:
 `This article <https://medium.com/p/1277a9ed34dc/>`_ talks more about
 decorators that take parameters and about `dek` in general.
 
-For your advanced decorator problems, the PyPi module
-`decorator <https://github.com/micheles/decorator/blob/master/docs/documentation.md>`_ does not duplicate duties that `dek` does, but does
+For your advanced decorator desires, the PyPi module
+[`decorator`](https://github.com/micheles/decorator/blob/master/docs/documentation.md) does not duplicate duties that `dek` does, but does
 pretty anything else you could conceive of in a decorator library.
 
 
