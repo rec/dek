@@ -256,27 +256,21 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
       are classes).
     """
 
-    def is_public_non_magic(m):
-        return not m.__name__.startswith('_')
-
-    def is_named(m):
-        return m.__name__.startswith(methods)
-
-    def no(m):
-        return False
-
     if methods is not None:
         if callable(methods):
             accept = methods
 
         elif methods is True:
-            accept = is_public_non_magic
+            def accept(m):
+                return not m.__name__.startswith('_')
 
         elif methods is False:
-            accept = no
+            def accept(m):
+                return False
 
         elif isinstance(methods, str):
-            accept = is_named
+            def accept(m):
+                return m.__name__.startswith(methods)
 
         else:
             raise TypeError('Do not understand methods=%s' % methods)
