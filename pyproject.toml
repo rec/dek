@@ -16,7 +16,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-xmod = "*"
+xmod = ">=1.6.1"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "*"
