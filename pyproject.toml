@@ -17,6 +17,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.8"
 xmod = ">=1.6.1"
+black = "^23.12.1"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+ruff = "^0.1.9"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "*"
