@@ -405,16 +405,16 @@ files = [
 
 [[package]]
 name = "xmod"
-version = "1.6.1"
+version = "1.8.0"
 description = "🌱 Turn any object into a module 🌱"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "xmod-1.6.1-py3-none-any.whl", hash = "sha256:ece12f2cecf6d243e09a5db23f3daee032eec00d83560774200d3805116c20bb"},
-    {file = "xmod-1.6.1.tar.gz", hash = "sha256:8f8a34ed7290e89e8b44969f8a19976d08affd8a7b9418bd428e802cb3365cc1"},
+    {file = "xmod-1.8.0-py3-none-any.whl", hash = "sha256:11ae15c4e14d4cd7f62131d269053ad0e16199fc2aeda9431a375038c06f11ac"},
+    {file = "xmod-1.8.0.tar.gz", hash = "sha256:429ff6bbfdcc2864f1d3a640d09349aeff880150c0a0da2efb51e0d85b8ec447"},
 ]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8"
-content-hash = "e6c9576e19f9077801ef3d96f3c9b6bc1152eb3c19866937d34cae133b6d92f5"
+content-hash = "c176133d7f1c758397ec138b6f0582dbcd42ff6d3e0f3f9bb0df2b37d1b4c88a"

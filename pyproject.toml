@@ -16,26 +16,25 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-xmod = ">=1.6.1"
-black = "^23.12.1"
-isort = "^5.13.2"
-mypy = "^1.8.0"
-ruff = "^0.1.9"
+xmod = "*"
 
 [tool.poetry.group.dev.dependencies]
+black = "*"
 coverage = "*"
-pytest = "*"
 flake8 = "*"
-
+isort = "*"
+mypy = "*"
+pytest = "*"
+ruff = "*"
 
 [tool.coverage]
 [tool.coverage.run]
-branch = "True"
-source = "dek"
+branch = true
+source = ["dek"]
 
 [tool.coverage.report]
 fail_under = "100"
-skip_covered = "True"
+skip_covered = true
 exclude_lines = ["pragma: no cover", "if False:", "if __name__ == .__main__.:", "raise NotImplementedError"]
 [build-system]
 requires = ["poetry-core"]
