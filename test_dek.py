@@ -1,5 +1,6 @@
-import dek
 import unittest
+
+import dek
 
 
 class TestDek(unittest.TestCase):

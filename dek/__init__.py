@@ -162,14 +162,19 @@ For your advanced decorator desires, the PyPi module
 documentation.md) does not duplicate duties that `dek` does, but does
 pretty anything else you could conceive of in a decorator library.
 """
-from typing import Callable
 import functools
+import typing as t
+
 import xmod
 
 __all__ = ('dek',)
 
 
-def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
+def _dek(
+    decorator: t.Callable,
+    defer: bool = False,
+    methods: t.Union[None, bool, str, t.Callable] = None,
+) -> t.Callable:
     """
     Decorate a decorator so it works with or without parameters and
     can decorate all the members of a class.
@@ -261,14 +266,17 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
             accept = methods
 
         elif methods is True:
+
             def accept(m):
                 return not m.__name__.startswith('_')
 
         elif methods is False:
+
             def accept(m):
                 return False
 
         elif isinstance(methods, str):
+
             def accept(m):
                 return m.__name__.startswith(methods)
 
@@ -292,7 +300,7 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
         return w if is_type else functools.update_wrapper(w, func)
 
     @functools.wraps(decorator)
-    def wrapped(*args, **kwargs):
+    def wrapped(*args, **kwargs) -> t.Any:
         if len(args) == 1 and callable(args[0]) and not kwargs:
             return decorate(args[0])
 
@@ -306,4 +314,4 @@ def _dek(decorator: Callable, defer: bool = False, methods: bool = None):
 
 
 dek = _dek(_dek, defer=True)  # dek decorates itself
-xmod(dek)
+xmod.xmod(dek)
