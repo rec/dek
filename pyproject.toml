@@ -13,6 +13,9 @@ description = "🎴 The decorator-decorator 🎴"
 authors = ["Tom Ritchford <tom@swirly.com>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/rec/dek"
+homepage = "https://github.com/rec/dek"
+documentation = "https://rec.github.io/dek"
 
 [tool.poetry.dependencies]
 python = ">=3.8"
