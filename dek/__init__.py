@@ -169,12 +169,14 @@ import xmod
 
 __all__ = ('dek',)
 
+Callable = t.Callable[..., t.Any]
+
 
 def _dek(
-    decorator: t.Callable,
+    decorator: Callable,
     defer: bool = False,
-    methods: t.Union[None, bool, str, t.Callable] = None,
-) -> t.Callable:
+    methods: t.Union[None, bool, str, Callable] = None,
+) -> Callable:
     """
     Decorate a decorator so it works with or without parameters and
     can decorate all the members of a class.
@@ -267,23 +269,23 @@ def _dek(
 
         elif methods is True:
 
-            def accept(m):
+            def accept(m: t.Any) -> bool:
                 return not m.__name__.startswith('_')
 
         elif methods is False:
 
-            def accept(m):
+            def accept(m: t.Any) -> bool:
                 return False
 
         elif isinstance(methods, str):
 
-            def accept(m):
-                return m.__name__.startswith(methods)
+            def accept(m: t.Any) -> bool:
+                return t.cast(bool, m.__name__.startswith(methods))
 
         else:
             raise TypeError('Do not understand methods=%s' % methods)
 
-    def decorate(func, *args, **kwargs):
+    def decorate(func: Callable, *args: t.Any, **kwargs: t.Any) -> Callable:
         is_type = isinstance(func, type)
 
         if methods is not None and is_type:
@@ -292,20 +294,20 @@ def _dek(
                     setattr(func, k, decorate(v, *args, **kwargs))
             return func
 
-        def simple_wrapper(*args_f, **kwargs_f):
+        def simple_wrapper(*args_f: t.Any, **kwargs_f: t.Any) -> Callable:
             f = functools.partial(func, *args_f, **kwargs_f)
-            return decorator(f, *args, **kwargs)
+            return t.cast(Callable, decorator(f, *args, **kwargs))
 
         w = decorator(func, *args, **kwargs) if defer else simple_wrapper
-        return w if is_type else functools.update_wrapper(w, func)
+        return t.cast(Callable, w if is_type else functools.update_wrapper(w, func))
 
     @functools.wraps(decorator)
-    def wrapped(*args, **kwargs) -> t.Any:
+    def wrapped(*args: t.Any, **kwargs: t.Any) -> Callable:
         if len(args) == 1 and callable(args[0]) and not kwargs:
             return decorate(args[0])
 
         @functools.wraps(decorator)
-        def deferred(func):
+        def deferred(func: Callable) -> Callable:
             return decorate(func, *args, **kwargs)
 
         return deferred
