@@ -3,7 +3,7 @@ auto = true
 
 [tool.poetry]
 name = "dek"
-version = "1.4.1"
+version = "1.4.2"
 description = "🎴 The decorator-decorator 🎴"
 authors = ["Tom Ritchford <tom@swirly.com>"]
 license = "MIT"
