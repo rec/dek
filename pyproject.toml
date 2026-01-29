@@ -1,31 +1,50 @@
-[tool.doks]
-auto = true
-
-[tool.poetry]
+[project]
 name = "dek"
 version = "1.4.2"
 description = "🎴 The decorator-decorator 🎴"
-authors = ["Tom Ritchford <tom@swirly.com>"]
-license = "MIT"
+authors = [{ name = "Tom Ritchford", email = "tom@swirly.com" }]
+requires-python = ">=3.8"
 readme = "README.md"
-repository = "https://github.com/rec/dek"
-homepage = "https://github.com/rec/dek"
-documentation = "https://rec.github.io/dek"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = ["xmod"]
 
-[tool.poetry.dependencies]
-python = ">=3.8"
-xmod = "*"
+[project.urls]
+Homepage = "https://github.com/rec/dek"
+Repository = "https://github.com/rec/dek"
+Documentation = "https://rec.github.io/dek"
 
-[tool.poetry.group.dev.dependencies]
-black = "*"
-coverage = "*"
-flake8 = "*"
-isort = "*"
-mypy = "*"
-pytest = "*"
-ruff = "*"
+[tool.doks]
+auto = true
 
-[tool.coverage]
+[dependency-groups]
+dev = [
+    "black",
+    "coverage",
+    "flake8",
+    "isort",
+    "mypy",
+    "pytest",
+    "ruff",
+]
+
+[tool.uv]
+
+[tool.uv.build-backend]
+module-root = ""
+
+[build-system]
+requires = ["uv_build>=0.9.0,<0.10.0"]
+build-backend = "uv_build"
 [tool.coverage.run]
 branch = true
 source = ["dek"]
@@ -43,6 +62,3 @@ quote-style = "single"
 
 [tool.mypy]
 strict = true
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
