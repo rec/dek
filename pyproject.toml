@@ -1,6 +1,6 @@
 [project]
 name = "dek"
-version = "1.5.0"
+version = "1.6.0"
 description = "🎴 The decorator-decorator 🎴"
 authors = [{ name = "Tom Ritchford", email = "tom@swirly.com" }]
 requires-python = ">=3.10"
@@ -44,7 +44,7 @@ quote-style = "single"
 
 [tool.poetry]
 name = "dek"
-version = "0.1.0"
+version = "1.6.0"
 description = "🎴 The decorator-decorator 🎴"
 authors = ["Tom Ritchford <tom@swirly.com>"]
 readme = "README.md"
